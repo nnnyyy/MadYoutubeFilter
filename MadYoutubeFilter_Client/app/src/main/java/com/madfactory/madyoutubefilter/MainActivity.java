@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         viewPager = (ViewPager)findViewById(R.id.viewpager);
         SetupViewPager(viewPager);
         tabLayout = (TabLayout)findViewById(R.id.tabs);
@@ -35,6 +35,9 @@ public class MainActivity extends AppCompatActivity {
     private void SetupViewPager(ViewPager vp) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         adapter.addItem("Sports" , new SportFragment());
+        adapter.addItem("Game" , new GameFragment());
+        adapter.addItem("Game" , new GameFragment());
+        adapter.addItem("Game" , new GameFragment());
         adapter.addItem("Game" , new GameFragment());
         vp.setAdapter(adapter);
     }
