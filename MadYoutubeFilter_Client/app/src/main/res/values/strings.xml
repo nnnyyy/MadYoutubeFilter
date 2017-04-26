@@ -2,4 +2,7 @@
     <string name="app_name">MadYoutubeFilter</string>
     <string name="cate_sports">스포츠</string>
     <string name="cate_live">라이브</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
