@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MadYoutubeFilter</string>
+    <string name="cate_sports">스포츠</string>
+    <string name="cate_live">라이브</string>
+</resources>
