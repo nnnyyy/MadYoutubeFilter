@@ -9,8 +9,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 
+import com.madfactory.madyoutubefilter.Data.GVal;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,14 +36,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void SetupViewPager(ViewPager vp) {
+        GVal.LoadCategory();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addItem("Sports" , new SportFragment());
-        adapter.addItem("Game" , new GameFragment());
-        adapter.addItem("Game" , new GameFragment());
-        adapter.addItem("Game" , new GameFragment());
-        adapter.addItem("Game" , new GameFragment());
+        ListIterator<GVal.MCategory> iter = GVal.GetCategories().listIterator();
+        while(iter.hasNext()) {
+            GVal.MCategory mc = iter.next();
+            CategoryFragment cf = new CategoryFragment();
+            cf.Set(mc);
+            adapter.addItem(mc.sName , cf);
+        }
         vp.setAdapter(adapter);
     }
+
+
 }
 
 class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -61,14 +69,16 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
         return mItemList.size();
     }
 
-    public void addItem(String _sTitle, Fragment _fragment) {
-        mItemList.add(new PagerItem(_fragment, _sTitle));
-    }
-
     @Override
     public CharSequence getPageTitle(int position) {
         return mItemList.get(position).sTitle;
     }
+
+    public void addItem(String _sTitle, Fragment _fragment) {
+        mItemList.add(new PagerItem(_fragment, _sTitle));
+    }
+
+
 }
 
 

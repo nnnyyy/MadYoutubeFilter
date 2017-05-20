@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "714992119061",
-    "firebase_url": "https://madyoutubefilter.firebaseio.com",
-    "project_id": "madyoutubefilter",
-    "storage_bucket": "madyoutubefilter.appspot.com"
+    "project_number": "730622971967",
+    "firebase_url": "https://todaysvideo-b00b7.firebaseio.com",
+    "project_id": "todaysvideo-b00b7",
+    "storage_bucket": "todaysvideo-b00b7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:714992119061:android:2bb1601a47ee5773",
+        "mobilesdk_app_id": "1:730622971967:android:2bb1601a47ee5773",
         "android_client_info": {
           "package_name": "com.madfactory.madyoutubefilter"
         }
       },
       "oauth_client": [
         {
-          "client_id": "714992119061-ptpaanliu1scma73cmet5i76msc3bh00.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.madfactory.madyoutubefilter",
-            "certificate_hash": "4ca1a41533c04c4c5e50fe7c4cbb5c2dd25d1d91"
-          }
-        },
-        {
-          "client_id": "714992119061-38hpe8avj7fj5kjhae3omakqtobujes8.apps.googleusercontent.com",
+          "client_id": "730622971967-qabh41d9ju2g8k7cp41m1erb3at9ciep.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAPFurECRMimZbXLpYh_Y0-qy8sDA4Iyjs"
+          "current_key": "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "714992119061-38hpe8avj7fj5kjhae3omakqtobujes8.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
