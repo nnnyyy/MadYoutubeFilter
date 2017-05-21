@@ -5,15 +5,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.madfactory.madyoutubefilter.Data.GVal;
+import com.madfactory.madyoutubefilter.YoutubeList.YoutubeArticleItem;
+import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
 
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -63,16 +69,6 @@ public class CategoryFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -91,5 +87,29 @@ public class CategoryFragment extends Fragment {
         TextView tv = new TextView(getActivity());
         tv.setText("Test!!!!!");
         llTop.addView(tv);
+
+        srl_youtubeList = (SwipeRefreshLayout)view.findViewById(R.id.srl_youtube_list);
+        srl_youtubeList.setOnRefreshListener(this);
+
+        ListView youtubeListView = (ListView)view.findViewById(R.id.lv_youtube_list);
+        YoutubeListAdapter adapter = new YoutubeListAdapter();
+        youtubeListView.setAdapter(adapter);
+        adapter.addItem(null, "TestItem", "TestItem Description");
+        adapter.addItem(null, "TestItem2", "TestItem2 Description");
+        youtubeListView.setOnItemClickListener(this);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
+        String titleStr = item.getTitle();
+        String descStr = item.getDesc();
+    }
+
+    SwipeRefreshLayout srl_youtubeList;
+
+    @Override
+    public void onRefresh() {
+        srl_youtubeList.setRefreshing(false); 
     }
 }
