@@ -1,5 +1,9 @@
 package com.madfactory.madyoutubefilter.Data;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,19 +13,32 @@ import java.util.List;
 
 public class GVal {
     static public List<MCategory> liCategories = new ArrayList<>();
-    static public void LoadCategory(){
-        MCategory newCategory = new MCategory();
-        newCategory.sName = "인기";
-        newCategory.sKey = "popul";
-        newCategory.AddSub("비제이", "bj");
-        newCategory.AddSub("가요", "kpop");
-        liCategories.add(newCategory);
-        newCategory = new MCategory();
-        newCategory.sName = "라이브";
-        newCategory.sKey = "live";
-        newCategory.AddSub("비제이", "bj");
-        newCategory.AddSub("음악방송", "music");
-        liCategories.add(newCategory);
+    static public boolean LoadCategory(String sResponse){
+        try {
+            JSONArray jsonArr = new JSONArray(sResponse);
+            int len = jsonArr.length();
+            for( int i = 0 ; i < len ; ++i ) {
+                MCategory newCategory = new MCategory();
+                JSONObject category = jsonArr.getJSONObject(i);
+                newCategory.sName = category.getString("name");
+                newCategory.sKey = category.getString("key");
+                if(!category.isNull("subCategory")) {
+                    JSONArray arrSub = category.getJSONArray("subCategory");
+                    for( int j = 0 ; j < arrSub.length() ; ++j ) {
+                        JSONObject subCategory = arrSub.getJSONObject(j);
+                        String sSubName = subCategory.getString("name");
+                        String sSubKey = subCategory.getString("key");
+                        newCategory.AddSub(sSubName, sSubKey);
+                    }
+                }
+                liCategories.add(newCategory);
+            }
+            return true;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     static public List<MCategory> GetCategories() {

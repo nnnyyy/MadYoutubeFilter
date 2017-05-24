@@ -29,6 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Iterator;
 
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, HttpHelperListener{
@@ -37,6 +39,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     private HttpHelper httpHelper = new HttpHelper();
     YoutubeListAdapter adapter;
     ListResultHandler listRetHandler;
+    private GVal.MCategory category;
 
     class ListResultHandler extends Handler {
         @Override
@@ -87,8 +90,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-    private GVal.MCategory category;
     public void Set(GVal.MCategory mc) {
         category = mc;
     }
@@ -112,7 +113,12 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         youtubeListView.setAdapter(adapter);
 
         httpHelper.SetListener(this);
-        httpHelper.Request("http://4seasonpension.com:4000/search/psy");
+        Log.e("Category", category.sKey);
+        try {
+            httpHelper.Request("http://4seasonpension.com:4000/search/" + URLEncoder.encode(category.sKey, "utf-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         youtubeListView.setOnItemClickListener(this);
     }
 

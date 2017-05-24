@@ -60,6 +60,11 @@ app.get('/terminalinfo/:no', function (req, res_parent) {
     }
 });
 
+app.get('/list' , function(req,res_parent) {
+    res_parent.send([{name:"인기", key:"인기"},{name:"라이브", key:"live"}]);
+})
+
+
 app.get('/search/:arg1' , function(req,res_parent) {
     var reqOptions = {
         url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&type=video&q='+urlencode(req.params.arg1),
