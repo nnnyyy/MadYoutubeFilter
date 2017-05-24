@@ -61,13 +61,17 @@ app.get('/terminalinfo/:no', function (req, res_parent) {
 });
 
 app.get('/list' , function(req,res_parent) {
-    res_parent.send([{name:"ÀÎ±â", key:"ÀÎ±â"},{name:"¶óÀÌºê", key:"live"}]);
+    res_parent.send([{name:"ï¿½Î±ï¿½", key:"ï¿½Î±ï¿½"},{name:"ï¿½ï¿½ï¿½Ìºï¿½", key:"live"}]);
 })
 
 
 app.get('/search/:arg1' , function(req,res_parent) {
+    var url_final = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&type=video&q='+urlencode(req.params.arg1);
+    if(req.query.pageToken != null) {
+        url_final += '&pageToken=' + req.query.pageToken;
+    }
     var reqOptions = {
-        url: 'https://www.googleapis.com/youtube/v3/search?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&type=video&q='+urlencode(req.params.arg1),
+        url: url_final,
         method: 'GET',
         headers: {
             'Accept' : 'application/xml',

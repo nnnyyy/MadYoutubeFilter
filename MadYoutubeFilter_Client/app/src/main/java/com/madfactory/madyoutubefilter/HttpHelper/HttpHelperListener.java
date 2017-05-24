@@ -5,5 +5,5 @@ package com.madfactory.madyoutubefilter.HttpHelper;
  */
 
 public interface HttpHelperListener {
-    void onResponse(int nErrorCode, String sResponse);
+    void onResponse(int nType, int nErrorCode, String sResponse);
 }

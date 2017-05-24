@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.DragEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,22 +22,32 @@ import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeArticleItem;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, HttpHelperListener{
+
+    class VideoInfo {
+        String id;
+        String title;
+        String thumbnailUrl;
+        String channelTitle;
+        String duration;
+        String definition;
+    }
+    private List<VideoInfo> liVideoInfoListTemp = new ArrayList<>();
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
     YoutubeListAdapter adapter;
     ListResultHandler listRetHandler;
+    DescResultHandler descRetHandler;
     private GVal.MCategory category;
 
     class ListResultHandler extends Handler {
@@ -46,6 +55,15 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
 
+            httpHelper.Request(1, "http://4seasonpension.com:4000/videosinfo/" + (String)msg.obj);
+        }
+    }
+
+    class DescResultHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            liVideoInfoListTemp.clear();
             adapter.notifyDataSetChanged();
         }
     }
@@ -99,6 +117,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         super.onViewCreated(view, savedInstanceState);
 
         listRetHandler = new ListResultHandler();
+        descRetHandler = new DescResultHandler();
 
         LinearLayout llTop = (LinearLayout)view.findViewById(R.id.ll_top);
         TextView tv = new TextView(getActivity());
@@ -115,7 +134,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         httpHelper.SetListener(this);
         Log.e("Category", category.sKey);
         try {
-            httpHelper.Request("http://4seasonpension.com:4000/search/" + URLEncoder.encode(category.sKey, "utf-8"));
+            httpHelper.Request(0, "http://4seasonpension.com:4000/search/" + URLEncoder.encode(category.sKey, "utf-8"));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
@@ -137,25 +156,64 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     @Override
-    public void onResponse(int nErrorCode, String sResponse) {
+    public void onResponse(int nType, int nErrorCode, String sResponse) {
+        switch(nType) {
+            case 0: procList(nErrorCode, sResponse); break;
+            case 1: procDesc(nErrorCode, sResponse); break;
+        }
+    }
+
+    void procList(int nErrorCode, String sResponse) {
+        if(nErrorCode != 0) {
+            // Error
+            return;
+        }
         JSONObject jsonObj = null;
         try {
             jsonObj = new JSONObject(sResponse);
             String sNextToken = jsonObj.getString("nextToken");
             JSONArray arrContents = jsonObj.getJSONArray("contents");
             int len = arrContents.length();
+            liVideoInfoListTemp.clear();
+            String sIdList = "";
             for(int i = 0 ; i < len ; ++i) {
+                VideoInfo vi = new VideoInfo();
                 JSONObject content = arrContents.getJSONObject(i);
-                String sID = content.getString("id");
-                String sTitle = content.getString("title");
-                String sThumbnails = content.getString("thumnails");
-                String sChannelTitle = content.getString("chtitle");
-                this.adapter.addItem(sThumbnails, sTitle, sID);
+                vi.id = content.getString("id");
+                vi.title = content.getString("title");
+                vi.thumbnailUrl = content.getString("thumnails");
+                vi.channelTitle = content.getString("chtitle");
+                liVideoInfoListTemp.add(vi);
+                sIdList += vi.id + ',';
             }
 
-            Message msg = new Message();
-            msg.arg1 = 0;
-            listRetHandler.sendMessage(msg);
+            Message msg = listRetHandler.obtainMessage(0, sIdList);
+            msg.sendToTarget();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    void procDesc(int nErrorCode, String sResponse) {
+        if(nErrorCode != 0) {
+            // Error
+            return;
+        }
+        JSONObject jsonObj = null;
+        try {
+            jsonObj = new JSONObject(sResponse);
+            JSONArray arrContents = jsonObj.getJSONArray("contents");
+            int len = liVideoInfoListTemp.size();
+            for(int i = 0 ; i < len ; ++i) {
+                VideoInfo vi = liVideoInfoListTemp.get(i);
+                JSONObject content = arrContents.getJSONObject(i);
+                vi.definition = content.getString("definition");
+                vi.duration = content.getString("duration");
+                adapter.addItem(vi.thumbnailUrl, vi.title, vi.duration);
+            }
+
+            Message msg = descRetHandler.obtainMessage(0);
+            msg.sendToTarget();
         } catch (JSONException e) {
             e.printStackTrace();
         }

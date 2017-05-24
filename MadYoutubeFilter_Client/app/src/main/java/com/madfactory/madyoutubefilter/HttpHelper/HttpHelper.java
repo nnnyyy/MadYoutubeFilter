@@ -22,7 +22,7 @@ public class HttpHelper {
     public void SetListener(HttpHelperListener _listener) {
         listener = _listener;
     }
-    public void Request(final String sURL) {
+    public void Request(final int nType, final String sURL) {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -53,14 +53,14 @@ public class HttpHelper {
                         byteData = baos.toByteArray();
                         response = new String(byteData);
 
-                        listener.onResponse(0, response);
+                        listener.onResponse(nType, 0, response);
                     }
                     else {
-                        listener.onResponse(-1, "");
+                        listener.onResponse(nType, -1, "");
                     }
                 }catch(IOException e){
                     e.printStackTrace();
-                    listener.onResponse(-1, "");
+                    listener.onResponse(nType, -1, "");
                 }finally {
                 }
             }

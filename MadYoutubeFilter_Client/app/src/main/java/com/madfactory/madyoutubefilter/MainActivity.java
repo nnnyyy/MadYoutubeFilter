@@ -50,11 +50,11 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         tabLayout.setupWithViewPager(viewPager);
 
         httpHelper.SetListener(this);
-        httpHelper.Request("http://4seasonpension.com:4000/list");
+        httpHelper.Request(0, "http://4seasonpension.com:4000/list");
     }
 
     @Override
-    public void onResponse(int nErrorCode, String sResponse) {
+    public void onResponse(int nType, int nErrorCode, String sResponse) {
         if( !GVal.LoadCategory(sResponse) ) {
             return;
         }
