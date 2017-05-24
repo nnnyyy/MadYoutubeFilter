@@ -12,6 +12,9 @@ import java.util.List;
  */
 
 public class GVal {
+    public static final String URL_Search = "http://4seasonpension.com:4000/search/";
+    public static final String URL_Description = "http://4seasonpension.com:4000/videosinfo/";
+
     static public List<MCategory> liCategories = new ArrayList<>();
     static public boolean LoadCategory(String sResponse){
         try {

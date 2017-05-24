@@ -75,4 +75,8 @@ public class YoutubeListAdapter extends BaseAdapter {
 
         alYoutubeList.add(item);
     }
+
+    public void removeAll() {
+        alYoutubeList.clear();
+    }
 }

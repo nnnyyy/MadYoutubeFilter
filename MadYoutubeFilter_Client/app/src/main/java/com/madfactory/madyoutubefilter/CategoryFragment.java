@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -42,9 +43,11 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         String definition;
     }
     private List<VideoInfo> liVideoInfoListTemp = new ArrayList<>();
+    private boolean bLoadingNext = false;
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
+    private String nextToken = "";
     YoutubeListAdapter adapter;
     ListResultHandler listRetHandler;
     DescResultHandler descRetHandler;
@@ -54,8 +57,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-
-            httpHelper.Request(1, "http://4seasonpension.com:4000/videosinfo/" + (String)msg.obj);
+            httpHelper.Request(1, GVal.URL_Description + (String)msg.obj);
         }
     }
 
@@ -65,6 +67,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             super.handleMessage(msg);
             liVideoInfoListTemp.clear();
             adapter.notifyDataSetChanged();
+            bLoadingNext = false;
+            srl_youtubeList.setRefreshing(false);
         }
     }
 
@@ -130,15 +134,41 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         ListView youtubeListView = (ListView)view.findViewById(R.id.lv_youtube_list);
         this.adapter = new YoutubeListAdapter();
         youtubeListView.setAdapter(adapter);
+        youtubeListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                int lastInScreen = firstVisibleItem + visibleItemCount;
+                if ((lastInScreen == totalItemCount) && !(bLoadingNext)) {
+                    LoadList();
+                }
+            }
+        });
 
         httpHelper.SetListener(this);
-        Log.e("Category", category.sKey);
+        LoadList();
+        youtubeListView.setOnItemClickListener(this);
+    }
+
+    private void LoadList() {
+        if(bLoadingNext) return;
+        bLoadingNext = true;
         try {
-            httpHelper.Request(0, "http://4seasonpension.com:4000/search/" + URLEncoder.encode(category.sKey, "utf-8"));
+            String urlRet = GVal.URL_Search + URLEncoder.encode(category.sKey, "utf-8");
+            if(!nextToken.isEmpty()) {
+                urlRet += "?pageToken=" + nextToken;
+            }
+            else {
+                adapter.removeAll();
+            }
+            httpHelper.Request(0, urlRet);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        youtubeListView.setOnItemClickListener(this);
     }
 
     @Override
@@ -152,7 +182,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-        srl_youtubeList.setRefreshing(false); 
+        nextToken = "";
+        LoadList();
     }
 
     @Override
@@ -171,7 +202,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         JSONObject jsonObj = null;
         try {
             jsonObj = new JSONObject(sResponse);
-            String sNextToken = jsonObj.getString("nextToken");
+            nextToken = jsonObj.getString("nextToken");
             JSONArray arrContents = jsonObj.getJSONArray("contents");
             int len = arrContents.length();
             liVideoInfoListTemp.clear();
