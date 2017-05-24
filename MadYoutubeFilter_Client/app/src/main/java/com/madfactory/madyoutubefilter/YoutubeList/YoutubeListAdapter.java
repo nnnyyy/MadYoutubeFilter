@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.madfactory.madyoutubefilter.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -57,7 +58,7 @@ public class YoutubeListAdapter extends BaseAdapter {
         YoutubeArticleItem listViewItem = alYoutubeList.get(position);
 
         // 아이템 내 각 위젯에 데이터 반영
-        iconImageView.setImageDrawable(listViewItem.getIcon());
+        Picasso.with(context).load(listViewItem.getThumbnailURL()).into(iconImageView);
         titleTextView.setText(listViewItem.getTitle());
         descTextView.setText(listViewItem.getDesc());
 
@@ -65,10 +66,10 @@ public class YoutubeListAdapter extends BaseAdapter {
     }
 
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(Drawable icon, String title, String desc) {
+    public void addItem(String sThumbnail, String title, String desc) {
         YoutubeArticleItem item = new YoutubeArticleItem();
 
-        item.setIcon(icon);
+        item.setThumbnail(sThumbnail);
         item.setTitle(title);
         item.setDesc(desc);
 

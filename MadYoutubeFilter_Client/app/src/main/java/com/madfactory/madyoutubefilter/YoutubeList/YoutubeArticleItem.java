@@ -7,12 +7,12 @@ import android.graphics.drawable.Drawable;
  */
 
 public class YoutubeArticleItem {
-    private Drawable iconDrawable ;
+    private String thumbnail;
     private String titleStr ;
     private String descStr ;
 
-    public void setIcon(Drawable icon) {
-        iconDrawable = icon ;
+    public void setThumbnail(String sThumbnail) {
+        thumbnail = sThumbnail ;
     }
     public void setTitle(String title) {
         titleStr = title ;
@@ -21,8 +21,8 @@ public class YoutubeArticleItem {
         descStr = desc ;
     }
 
-    public Drawable getIcon() {
-        return this.iconDrawable ;
+    public String getThumbnailURL() {
+        return this.thumbnail ;
     }
     public String getTitle() {
         return this.titleStr ;
