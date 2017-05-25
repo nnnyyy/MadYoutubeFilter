@@ -234,13 +234,20 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         try {
             jsonObj = new JSONObject(sResponse);
             JSONArray arrContents = jsonObj.getJSONArray("contents");
-            int len = liVideoInfoListTemp.size();
+            int len = arrContents.length();
             for(int i = 0 ; i < len ; ++i) {
-                VideoInfo vi = liVideoInfoListTemp.get(i);
                 JSONObject content = arrContents.getJSONObject(i);
-                vi.definition = content.getString("definition");
-                vi.duration = content.getString("duration");
-                adapter.addItem(vi.thumbnailUrl, vi.title, vi.duration);
+                String id = content.getString("id");
+                for(int j = 0 ; j < liVideoInfoListTemp.size() ; ++j) {
+                    if( liVideoInfoListTemp.get(j).id.equals(id)) {
+                        VideoInfo vi = liVideoInfoListTemp.get(j);
+                        vi.definition = content.getString("definition");
+                        vi.duration = content.getString("duration");
+                        adapter.addItem(vi.thumbnailUrl, vi.title, vi.duration);
+                        liVideoInfoListTemp.remove(j);
+                        break;
+                    }
+                }
             }
 
             Message msg = descRetHandler.obtainMessage(0);
