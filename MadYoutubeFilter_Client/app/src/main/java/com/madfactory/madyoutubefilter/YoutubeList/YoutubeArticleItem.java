@@ -2,32 +2,25 @@ package com.madfactory.madyoutubefilter.YoutubeList;
 
 import android.graphics.drawable.Drawable;
 
+import com.madfactory.madyoutubefilter.CategoryFragment;
+
 /**
  * Created by nnnyy on 2017-05-21.
  */
 
 public class YoutubeArticleItem {
-    private String thumbnail;
-    private String titleStr ;
-    private String descStr ;
+    private CategoryFragment.VideoInfo info;
 
-    public void setThumbnail(String sThumbnail) {
-        thumbnail = sThumbnail ;
-    }
-    public void setTitle(String title) {
-        titleStr = title ;
-    }
-    public void setDesc(String desc) {
-        descStr = desc ;
+    public void setInfo(CategoryFragment.VideoInfo _vi) {
+        info = _vi ;
     }
 
     public String getThumbnailURL() {
-        return this.thumbnail ;
+        return info.thumbnailUrl ;
     }
-    public String getTitle() {
-        return this.titleStr ;
+    public String getTitle() { return info.title; }
+    public String getDuration() {
+        return info.duration;
     }
-    public String getDesc() {
-        return this.descStr ;
-    }
+    public String getID() { return info.id; }
 }

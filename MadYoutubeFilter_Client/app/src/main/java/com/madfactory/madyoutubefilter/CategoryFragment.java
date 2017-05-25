@@ -1,6 +1,8 @@
 package com.madfactory.madyoutubefilter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,13 +36,13 @@ import java.util.List;
 
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, HttpHelperListener{
 
-    class VideoInfo {
-        String id;
-        String title;
-        String thumbnailUrl;
-        String channelTitle;
-        String duration;
-        String definition;
+    public class VideoInfo {
+        public String id;
+        public String title;
+        public String thumbnailUrl;
+        public String channelTitle;
+        public String duration;
+        public String definition;
     }
     private List<VideoInfo> liVideoInfoListTemp = new ArrayList<>();
     private boolean bLoadingNext = false;
@@ -134,6 +136,10 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         ListView youtubeListView = (ListView)view.findViewById(R.id.lv_youtube_list);
         this.adapter = new YoutubeListAdapter();
         youtubeListView.setAdapter(adapter);
+
+        httpHelper.SetListener(this);
+        LoadList();
+        youtubeListView.setOnItemClickListener(this);
         youtubeListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -148,10 +154,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                 }
             }
         });
-
-        httpHelper.SetListener(this);
-        LoadList();
-        youtubeListView.setOnItemClickListener(this);
     }
 
     private void LoadList() {
@@ -174,8 +176,12 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
-        String titleStr = item.getTitle();
-        String descStr = item.getDesc();
+        String sTitle = item.getTitle();
+        String sDuration = item.getDuration();
+
+        Intent intent=new Intent(getActivity(),VideoPlayerActivity.class);
+        intent.putExtra("videoID", item.getID());
+        startActivity(intent);
     }
 
     SwipeRefreshLayout srl_youtubeList;
@@ -243,7 +249,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                         VideoInfo vi = liVideoInfoListTemp.get(j);
                         vi.definition = content.getString("definition");
                         vi.duration = content.getString("duration");
-                        adapter.addItem(vi.thumbnailUrl, vi.title, vi.duration);
+                        adapter.addItem(vi);
                         liVideoInfoListTemp.remove(j);
                         break;
                     }
@@ -255,5 +261,11 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.e("!!!!!", "!!!!!!!!");
     }
 }

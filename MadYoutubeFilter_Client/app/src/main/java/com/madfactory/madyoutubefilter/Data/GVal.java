@@ -15,6 +15,8 @@ public class GVal {
     public static final String URL_Search = "http://4seasonpension.com:4000/search/";
     public static final String URL_Description = "http://4seasonpension.com:4000/videosinfo/";
 
+    public static final String ANDROID_KEY = "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk";
+
     static public List<MCategory> liCategories = new ArrayList<>();
     static public boolean LoadCategory(String sResponse){
         try {
