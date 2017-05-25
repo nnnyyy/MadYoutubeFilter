@@ -4,5 +4,7 @@
     <string name="cate_live">Live</string>
 
     <string name="err_network">네트워크 오류입니다.\r\n연결 상태를 확인 해주세요.</string>
+    <string name="err_parcing">데이터 파싱에 실패했습니다.</string>
     <string name="alert_title">알림</string>
+    <string name="title_activity_video_player">VideoPlayerActivity</string>
 </resources>
