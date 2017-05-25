@@ -1,5 +1,6 @@
 package com.madfactory.madyoutubefilter;
 
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -11,8 +12,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.View;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
 import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
@@ -24,6 +30,9 @@ import java.util.ListIterator;
 
 public class MainActivity extends AppCompatActivity implements HttpHelperListener {
 
+    // Firebase Analytics
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     private Toolbar toolbar;
     private ViewPager viewPager;
     private TabLayout tabLayout;
@@ -32,6 +41,26 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
+            if(msg.what == -1 ) {
+                AlertManager.ShowOk(MainActivity.this, getString(R.string.alert_title), getString(R.string.err_network), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                return;
+            }
+            if(msg.what == -2) {
+                AlertManager.ShowOk(MainActivity.this, getString(R.string.alert_title), getString(R.string.err_parcing), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                });
+                return;
+            }
+
             ViewPagerAdapter adapter = (ViewPagerAdapter)msg.obj;
             viewPager.setAdapter(adapter);
         }
@@ -41,10 +70,12 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
         viewPager = (ViewPager)findViewById(R.id.viewpager);
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -54,8 +85,32 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
+
+        LayoutInflater inflater = (LayoutInflater)getSystemService(LAYOUT_INFLATER_SERVICE);
+        View actionbarView = inflater.inflate(R.layout.custom_actionbar, null);
+        getSupportActionBar().setCustomView(actionbarView);
+        Toolbar parentBar = (Toolbar)actionbarView.getParent();
+        parentBar.setContentInsetsAbsolute(0,0);
+
+        return true;
+    }
+
+    @Override
     public void onResponse(int nType, int nErrorCode, String sResponse) {
+        if(nErrorCode != 0 ) {
+            Message completeMsg = mHandler.obtainMessage(nErrorCode);
+            completeMsg.sendToTarget();
+            return;
+        }
+
         if( !GVal.LoadCategory(sResponse) ) {
+            Message completeMsg = mHandler.obtainMessage(-2);
+            completeMsg.sendToTarget();
             return;
         }
 

@@ -3,6 +3,7 @@
     <string name="cate_sports">스포츠</string>
     <string name="cate_live">라이브</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="err_network">네트워크 오류입니다.\r\n연결 상태를 확인 해주세요.</string>
+    <string name="err_parcing">데이터 파싱에 실패했습니다.</string>
+    <string name="alert_title">알림</string>
 </resources>
