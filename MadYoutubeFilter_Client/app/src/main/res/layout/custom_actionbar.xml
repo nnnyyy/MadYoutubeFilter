@@ -31,8 +31,8 @@
         android:id="@+id/btnHistory"
         android:layout_alignParentRight="true"
         android:background="@drawable/search"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="10dp"/>
 </RelativeLayout>

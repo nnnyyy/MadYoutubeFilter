@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,9 +31,12 @@ import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -45,6 +49,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         public String channelTitle;
         public String duration;
         public String definition;
+        public String viewCnt;
+        public String commentCnt;
     }
     private List<VideoInfo> liVideoInfoListTemp = new ArrayList<>();
     private boolean bLoadingNext = false;
@@ -56,6 +62,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     ListResultHandler listRetHandler;
     DescResultHandler descRetHandler;
     private GVal.MCategory category;
+    public int subCategoryIndex = 0;
+    private TextView selectedSubCategoryView = null;
 
     class ListResultHandler extends Handler {
         @Override
@@ -124,28 +132,46 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        nextToken = "";
+        ResetLoadInfo();
 
         listRetHandler = new ListResultHandler();
         descRetHandler = new DescResultHandler();
 
         LinearLayout llTop = (LinearLayout)view.findViewById(R.id.ll_top);
-        TextView tv = new TextView(getActivity());
-        tv.setText("Sub1");
-        tv.setGravity(Gravity.CENTER);
-        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        llTop.addView(tv);
-        tv = new TextView(getActivity());
-        tv.setText("Sub2");
-        tv.setGravity(Gravity.CENTER);
-        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        llTop.addView(tv);
-        tv = new TextView(getActivity());
-        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
-        tv.setText("Sub3");
-        tv.setGravity(Gravity.CENTER);
-        llTop.addView(tv);
-
+        if(category.liSubCategories.size() != 0) {
+            Iterator<GVal.SubCategory> iter = category.liSubCategories.iterator();
+            int subIdx = 0;
+            while(iter.hasNext()) {
+                GVal.SubCategory sub = iter.next();
+                TextView tv = new TextView(getActivity());
+                tv.setText(sub.sName);
+                tv.setGravity(Gravity.CENTER);
+                tv.setTag(subIdx);
+                tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(bLoadingNext) return;
+                        selectedSubCategoryView.setBackgroundColor(Color.rgb(235,235,235));
+                        subCategoryIndex = (int)v.getTag();
+                        ResetLoadInfo();
+                        LoadList();
+                        selectedSubCategoryView = (TextView)v;
+                        selectedSubCategoryView.setBackgroundColor(Color.rgb(255,255,255));
+                    }
+                });
+                llTop.addView(tv);
+                if(subIdx == 0) {
+                    selectedSubCategoryView = tv;
+                    selectedSubCategoryView.setBackgroundColor(Color.rgb(255,255,255));
+                }
+                subIdx++;
+            }
+            llTop.setVisibility(View.VISIBLE);
+        }
+        else {
+            llTop.setVisibility(View.GONE);
+        }
 
         srl_youtubeList = (SwipeRefreshLayout)view.findViewById(R.id.srl_youtube_list);
         srl_youtubeList.setOnRefreshListener(this);
@@ -173,11 +199,19 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         });
     }
 
+    private void ResetLoadInfo() {
+        nextToken = "";
+    }
+
     private void LoadList() {
         if(bLoadingNext) return;
         bLoadingNext = true;
+        String searchKey = category.sKey;
+        if(category.liSubCategories.size() != 0) {
+            searchKey += " " + category.liSubCategories.get(subCategoryIndex).sKey;
+        }
         try {
-            String urlRet = GVal.URL_Search + URLEncoder.encode(category.sKey, "utf-8");
+            String urlRet = GVal.URL_Search + URLEncoder.encode(searchKey, "utf-8");
             if(!nextToken.isEmpty()) {
                 urlRet += "?pageToken=" + nextToken;
             }
@@ -263,6 +297,13 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                         VideoInfo vi = liVideoInfoListTemp.get(j);
                         vi.definition = content.getString("definition");
                         vi.duration = content.getString("duration");
+                        vi.viewCnt = content.getString("viewCnt");
+                        if( !content.isNull("commentCnt") ) {
+                            vi.commentCnt = content.getString("commentCnt");
+                        }
+                        else {
+                            vi.commentCnt = "0";
+                        }
                         adapter.addItem(vi);
                         liVideoInfoListTemp.remove(j);
                         break;

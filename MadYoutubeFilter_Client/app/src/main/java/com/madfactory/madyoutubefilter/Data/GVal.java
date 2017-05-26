@@ -19,6 +19,7 @@ public class GVal {
 
     static public List<MCategory> liCategories = new ArrayList<>();
     static public boolean LoadCategory(String sResponse){
+        liCategories.clear();
         try {
             JSONArray jsonArr = new JSONArray(sResponse);
             int len = jsonArr.length();

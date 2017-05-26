@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -134,6 +135,25 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         Message completeMsg = mHandler.obtainMessage(0, adapter);
         completeMsg.sendToTarget();
     }
+
+    private boolean exit = false;
+    @Override
+    public void onBackPressed() {
+        if (exit) {
+            finish(); // finish activity
+        } else {
+            Toast.makeText(this, "한번 더 누르면 종료 됩니다",
+                    Toast.LENGTH_SHORT).show();
+            exit = true;
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    exit = false;
+                }
+            }, 3 * 1000);
+
+        }
+    }
 }
 
 class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -162,8 +182,6 @@ class ViewPagerAdapter extends FragmentPagerAdapter {
     public void addItem(String _sTitle, Fragment _fragment) {
         mItemList.add(new PagerItem(_fragment, _sTitle));
     }
-
-
 }
 
 

@@ -11,6 +11,7 @@
         android:theme="@style/AppTheme">
         <!-- 화면전환 시에도 데이터가 초기화 되지 않게 하는 옵션 orientation|screenSize -->
         <activity android:name=".MainActivity"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             >
             <intent-filter>

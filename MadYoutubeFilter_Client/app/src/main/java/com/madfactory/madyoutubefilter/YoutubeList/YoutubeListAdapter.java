@@ -2,6 +2,7 @@ package com.madfactory.madyoutubefilter.YoutubeList;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import java.text.NumberFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,9 @@ public class YoutubeListAdapter extends BaseAdapter {
 
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
-        TextView titleTextView = (TextView) convertView.findViewById(R.id.textView1) ;
-        TextView descTextView = (TextView) convertView.findViewById(R.id.textView2) ;
+        TextView titleTextView = (TextView) convertView.findViewById(R.id.tvTitle) ;
+        TextView viewCntTextView = (TextView) convertView.findViewById(R.id.tvViewCnt);
+        TextView durationTextView = (TextView) convertView.findViewById(R.id.tvDuration);
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         YoutubeArticleItem listViewItem = alYoutubeList.get(position);
@@ -61,7 +63,10 @@ public class YoutubeListAdapter extends BaseAdapter {
         // 아이템 내 각 위젯에 데이터 반영
         Picasso.with(context).load(listViewItem.getThumbnailURL()).into(iconImageView);
         titleTextView.setText(listViewItem.getTitle());
-        descTextView.setText(listViewItem.getDuration());
+        NumberFormat nf = NumberFormat.getInstance();
+        nf.setMaximumIntegerDigits(10); //최대수 지정
+        viewCntTextView.setText("view: " + nf.format( Integer.parseInt(listViewItem.getViewCnt()) ));
+        durationTextView.setText(listViewItem.getDuration());
 
         return convertView;
     }

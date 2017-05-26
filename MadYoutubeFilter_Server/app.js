@@ -61,7 +61,7 @@ app.get('/terminalinfo/:no', function (req, res_parent) {
 });
 
 app.get('/list' , function(req,res_parent) {
-    res_parent.send([{name:"인기", key:"인기"},{name:"라이브", key:"live"}]);
+    res_parent.send([{name:"인기", key:"인기", subCategory: [{name:"K-Pop", key:"kpop"}, {name:"J-Pop", key:"jpop"} ]},{name:"라이브", key:"live"}]);
 })
 
 
@@ -103,7 +103,7 @@ app.get('/search/:arg1' , function(req,res_parent) {
 
 app.get('/videosinfo/:arg1' , function(req,res_parent) {
     var reqOptions = {
-        url: 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails&key='+youtubeBrowerKey+'&id='+req.params.arg1,
+        url: 'https://www.googleapis.com/youtube/v3/videos?part=contentDetails,statistics&key='+youtubeBrowerKey+'&id='+req.params.arg1,
         method: 'GET',
         headers: {
             'Accept' : 'application/xml',
@@ -120,7 +120,9 @@ app.get('/videosinfo/:arg1' , function(req,res_parent) {
                 var id = item.id;
                 var duration = item.contentDetails.duration;
                 var definition = item.contentDetails.definition;
-                list.push({id:id, duration: duration, definition:definition});
+                var viewCnt = item.statistics.viewCount;
+                var commentCnt = item.statistics.commentCount;
+                list.push({id:id, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
             }
             res_parent.send({contents:list});
         });

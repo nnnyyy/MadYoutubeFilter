@@ -23,4 +23,6 @@ public class YoutubeArticleItem {
         return info.duration;
     }
     public String getID() { return info.id; }
+    public String getViewCnt() { return info.viewCnt; }
+    public String getCommentCnt() { return info.commentCnt; }
 }
