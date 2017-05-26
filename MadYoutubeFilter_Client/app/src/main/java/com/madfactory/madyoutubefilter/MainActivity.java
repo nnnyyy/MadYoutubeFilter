@@ -16,6 +16,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
 
     // Firebase Analytics
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private AdView mAdView;
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -82,6 +86,10 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
 
         httpHelper.SetListener(this);
         httpHelper.Request(0, "http://4seasonpension.com:4000/list");
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     @Override

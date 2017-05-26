@@ -9,8 +9,9 @@
         android:layout_width="match_parent"
         android:layout_height="40dip"
         android:id="@+id/ll_top"
-        android:background="#ff0000"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:background="#ebebeb"
+        android:gravity="center"
         >
     </LinearLayout>
     <android.support.v4.widget.SwipeRefreshLayout
@@ -21,6 +22,7 @@
         <ListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#ebebeb"
             android:id="@+id/lv_youtube_list">
         </ListView>
     </android.support.v4.widget.SwipeRefreshLayout>

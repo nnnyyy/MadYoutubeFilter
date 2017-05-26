@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:gravity="center_vertical"
-    android:background="#2F9D27"
+    android:background="#ebebeb"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="56dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    >
 
     <ImageButton
         android:id="@+id/btnBack"
         android:layout_alignParentLeft="true"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:background="@drawable/common_full_open_on_phone"/>
+        android:scaleType="centerInside"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:background="@drawable/logo_1"
+        android:layout_marginTop="7dp"
+        android:layout_marginLeft="10dp"
+        />
 
     <TextView
-        android:text="@string/app_name"
+        android:text=""
         android:id="@+id/title"
         android:textSize="20sp"
         android:textColor="#fff"
         android:gravity="center_vertical"
-        android:layout_marginLeft="17dp"
-        android:layout_toRightOf="@id/btnBack"
-        android:layout_width="match_parent"
-        android:layout_height="56dp" />
-
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        />
     <ImageButton
         android:id="@+id/btnHistory"
         android:layout_alignParentRight="true"
-        android:background="@drawable/common_full_open_on_phone"
-        android:layout_width="56dp"
-        android:layout_height="56dp" />
+        android:background="@drawable/search"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"/>
 </RelativeLayout>

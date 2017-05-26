@@ -1,5 +1,6 @@
 package com.madfactory.madyoutubefilter;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -11,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,13 +124,28 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        nextToken = "";
+
         listRetHandler = new ListResultHandler();
         descRetHandler = new DescResultHandler();
 
         LinearLayout llTop = (LinearLayout)view.findViewById(R.id.ll_top);
         TextView tv = new TextView(getActivity());
-        tv.setText("Test!!!!!");
+        tv.setText("Sub1");
+        tv.setGravity(Gravity.CENTER);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
         llTop.addView(tv);
+        tv = new TextView(getActivity());
+        tv.setText("Sub2");
+        tv.setGravity(Gravity.CENTER);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        llTop.addView(tv);
+        tv = new TextView(getActivity());
+        tv.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
+        tv.setText("Sub3");
+        tv.setGravity(Gravity.CENTER);
+        llTop.addView(tv);
+
 
         srl_youtubeList = (SwipeRefreshLayout)view.findViewById(R.id.srl_youtube_list);
         srl_youtubeList.setOnRefreshListener(this);
@@ -176,9 +193,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
-        String sTitle = item.getTitle();
-        String sDuration = item.getDuration();
-
         Intent intent=new Intent(getActivity(),VideoPlayerActivity.class);
         intent.putExtra("videoID", item.getID());
         startActivity(intent);
