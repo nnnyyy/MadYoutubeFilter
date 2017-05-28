@@ -12,9 +12,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
@@ -87,10 +90,6 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
 
         httpHelper.SetListener(this);
         httpHelper.Request(0, "http://4seasonpension.com:4000/list");
-
-        mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        mAdView.loadAd(adRequest);
     }
 
     @Override
@@ -105,6 +104,25 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         getSupportActionBar().setCustomView(actionbarView);
         Toolbar parentBar = (Toolbar)actionbarView.getParent();
         parentBar.setContentInsetsAbsolute(0,0);
+
+        EditText etSearchText = (EditText)findViewById(R.id.etSearchText);
+        etSearchText.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if(keyCode == event.KEYCODE_ENTER) {
+
+                }
+                return false;
+            }
+        });
+        ImageButton btnSearch = (ImageButton)findViewById(R.id.btnSearch);
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         return true;
     }

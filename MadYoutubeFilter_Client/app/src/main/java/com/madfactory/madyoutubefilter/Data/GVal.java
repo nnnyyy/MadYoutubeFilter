@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public class GVal {
-    public static final String URL_Search = "http://4seasonpension.com:4000/search/";
+    public static final String URL_Search = "http://4seasonpension.com:4000/v/";
     public static final String URL_Description = "http://4seasonpension.com:4000/videosinfo/";
 
     public static final String ANDROID_KEY = "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk";
@@ -28,6 +28,7 @@ public class GVal {
                 JSONObject category = jsonArr.getJSONObject(i);
                 newCategory.sName = category.getString("name");
                 newCategory.sKey = category.getString("key");
+                newCategory.sType = category.getString("type");
                 if(!category.isNull("subCategory")) {
                     JSONArray arrSub = category.getJSONArray("subCategory");
                     for( int j = 0 ; j < arrSub.length() ; ++j ) {
@@ -54,6 +55,7 @@ public class GVal {
     public static class MCategory {
         public String sName;
         public String sKey;
+        public String sType;
         public List<SubCategory> liSubCategories = new ArrayList<>();
 
         public void AddSub(String _sName, String _sKey) {

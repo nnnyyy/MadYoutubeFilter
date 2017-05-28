@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
@@ -38,6 +39,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, HttpHelperListener{
@@ -52,12 +54,12 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         public String viewCnt;
         public String commentCnt;
     }
-    private List<VideoInfo> liVideoInfoListTemp = new ArrayList<>();
     private boolean bLoadingNext = false;
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
     private String nextToken = "";
+    private int randomAdsIndex = 5;
     YoutubeListAdapter adapter;
     ListResultHandler listRetHandler;
     DescResultHandler descRetHandler;
@@ -77,7 +79,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            liVideoInfoListTemp.clear();
             adapter.notifyDataSetChanged();
             bLoadingNext = false;
             srl_youtubeList.setRefreshing(false);
@@ -192,7 +193,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
                 int lastInScreen = firstVisibleItem + visibleItemCount;
-                if ((lastInScreen == totalItemCount) && !(bLoadingNext)) {
+                if (!nextToken.isEmpty() && (lastInScreen == totalItemCount) && !(bLoadingNext)) {
                     LoadList();
                 }
             }
@@ -201,6 +202,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     private void ResetLoadInfo() {
         nextToken = "";
+        randomAdsIndex = (new Random()).nextInt(5) + 4;
     }
 
     private void LoadList() {
@@ -208,12 +210,17 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         bLoadingNext = true;
         String searchKey = category.sKey;
         if(category.liSubCategories.size() != 0) {
-            searchKey += " " + category.liSubCategories.get(subCategoryIndex).sKey;
+            if(searchKey.isEmpty()) {
+                searchKey = category.liSubCategories.get(subCategoryIndex).sKey;
+            }
+            else {
+                searchKey += " " + category.liSubCategories.get(subCategoryIndex).sKey;
+            }
         }
         try {
-            String urlRet = GVal.URL_Search + URLEncoder.encode(searchKey, "utf-8");
+            String urlRet = GVal.URL_Search + URLEncoder.encode(searchKey, "utf-8") + "?contentType=" + category.sType;
             if(!nextToken.isEmpty()) {
-                urlRet += "?pageToken=" + nextToken;
+                urlRet += "&pageToken=" + nextToken;
             }
             else {
                 adapter.removeAll();
@@ -244,7 +251,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     public void onResponse(int nType, int nErrorCode, String sResponse) {
         switch(nType) {
             case 0: procList(nErrorCode, sResponse); break;
-            case 1: procDesc(nErrorCode, sResponse); break;
         }
     }
 
@@ -256,62 +262,32 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         JSONObject jsonObj = null;
         try {
             jsonObj = new JSONObject(sResponse);
-            nextToken = jsonObj.getString("nextToken");
+            if(!jsonObj.isNull("nextToken"))
+                nextToken = jsonObj.getString("nextToken");
+
             JSONArray arrContents = jsonObj.getJSONArray("contents");
             int len = arrContents.length();
-            liVideoInfoListTemp.clear();
             String sIdList = "";
             for(int i = 0 ; i < len ; ++i) {
                 VideoInfo vi = new VideoInfo();
                 JSONObject content = arrContents.getJSONObject(i);
+                Log.e("SSSS", content.toString());
                 vi.id = content.getString("id");
                 vi.title = content.getString("title");
                 vi.thumbnailUrl = content.getString("thumnails");
                 vi.channelTitle = content.getString("chtitle");
-                liVideoInfoListTemp.add(vi);
-                sIdList += vi.id + ',';
-            }
-
-            Message msg = listRetHandler.obtainMessage(0, sIdList);
-            msg.sendToTarget();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void procDesc(int nErrorCode, String sResponse) {
-        if(nErrorCode != 0) {
-            // Error
-            return;
-        }
-        JSONObject jsonObj = null;
-        try {
-            jsonObj = new JSONObject(sResponse);
-            JSONArray arrContents = jsonObj.getJSONArray("contents");
-            int len = arrContents.length();
-            for(int i = 0 ; i < len ; ++i) {
-                JSONObject content = arrContents.getJSONObject(i);
-                String id = content.getString("id");
-                for(int j = 0 ; j < liVideoInfoListTemp.size() ; ++j) {
-                    if( liVideoInfoListTemp.get(j).id.equals(id)) {
-                        VideoInfo vi = liVideoInfoListTemp.get(j);
-                        vi.definition = content.getString("definition");
-                        vi.duration = content.getString("duration");
-                        vi.viewCnt = content.getString("viewCnt");
-                        if( !content.isNull("commentCnt") ) {
-                            vi.commentCnt = content.getString("commentCnt");
-                        }
-                        else {
-                            vi.commentCnt = "0";
-                        }
-                        adapter.addItem(vi);
-                        liVideoInfoListTemp.remove(j);
-                        break;
-                    }
+                vi.definition = content.getString("definition");
+                vi.duration = content.getString("duration");
+                vi.viewCnt = content.getString("viewCnt");
+                if( randomAdsIndex == adapter.getCount() -1 ) {
+                    VideoInfo vi_temp = new VideoInfo();
+                    vi_temp.id = "admob_ads";
+                    adapter.addItem(vi_temp);
                 }
+                adapter.addItem(vi);
             }
 
-            Message msg = descRetHandler.obtainMessage(0);
+            Message msg = descRetHandler.obtainMessage(0, sIdList);
             msg.sendToTarget();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -321,6 +297,5 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        Log.e("!!!!!", "!!!!!!!!");
     }
 }
