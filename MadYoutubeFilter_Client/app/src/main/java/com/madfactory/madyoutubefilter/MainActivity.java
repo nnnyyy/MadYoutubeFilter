@@ -135,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
             return;
         }
 
+        GVal.loadFavorate(getApplicationContext());
         if( !GVal.LoadCategory(sResponse) ) {
             Message completeMsg = mHandler.obtainMessage(-2);
             completeMsg.sendToTarget();

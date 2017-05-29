@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.NativeExpressAdView;
 import com.madfactory.madyoutubefilter.CategoryFragment;
+import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.R;
 import com.squareup.picasso.Picasso;
 
@@ -70,15 +71,25 @@ public class YoutubeListAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.list_item_youtube_article, parent, false);
             // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
             ImageView iconImageView = (ImageView) convertView.findViewById(R.id.imageView1) ;
-            TextView titleTextView = (TextView) convertView.findViewById(R.id.tvTitle) ;
+            final TextView titleTextView = (TextView) convertView.findViewById(R.id.tvTitle) ;
             TextView viewCntTextView = (TextView) convertView.findViewById(R.id.tvViewCnt);
             TextView durationTextView = (TextView) convertView.findViewById(R.id.tvDuration);
             final LinearLayout btnFavoriteArea = (LinearLayout)convertView.findViewById(R.id.btnFavoriteArea);
             final ImageView btnFavorite = (ImageView)convertView.findViewById(R.id.btnFavorite);
+            if(GVal.isFavorated(titleTextView.getText().hashCode())) {
+                btnFavorite.setImageResource(R.drawable.star);
+            }
             btnFavoriteArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    btnFavorite.setImageResource(R.drawable.star);
+                    if(GVal.isFavorated(titleTextView.getText().hashCode())) {
+                        btnFavorite.setImageResource(R.drawable.star_gray);
+                        GVal.removeFavorate(context, titleTextView.getText().hashCode());
+                    }
+                    else {
+                        btnFavorite.setImageResource(R.drawable.star);
+                        GVal.setFavorate(context, titleTextView.getText().hashCode());
+                    }
                 }
             });
 

@@ -1,10 +1,15 @@
 package com.madfactory.madyoutubefilter.Data;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -14,9 +19,10 @@ import java.util.List;
 public class GVal {
     public static final String URL_Search = "http://4seasonpension.com:4000/v/";
     public static final String URL_Description = "http://4seasonpension.com:4000/videosinfo/";
-
     public static final String ANDROID_KEY = "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk";
+    public static final String KEY_FAVORATE = "ReadedArticles";
 
+    public static HashSet<Integer> liFavorate = new HashSet<>();
     static public List<MCategory> liCategories = new ArrayList<>();
     static public boolean LoadCategory(String sResponse){
         liCategories.clear();
@@ -80,6 +86,88 @@ public class GVal {
         public String sName;
         public String sKey;
         public String sType;
+    }
+
+    public static void setStringArrayPref(Context context , String sKey, ArrayList<String> values){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        JSONArray a = new JSONArray();
+        for(int i =  0 ; i < values.size() ; ++i) {
+            a.put(values.get(i));
+        }
+
+        if(!values.isEmpty()) {
+            editor.putString(sKey, a.toString());
+        }
+        else {
+            editor.putString(sKey, null);
+        }
+
+        editor.apply();
+    }
+
+    public static ArrayList<String> getStringArrayPref(Context context, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String json = prefs.getString(key, null);
+        ArrayList<String> a = new ArrayList<>();
+        if( json != null) {
+            try {
+                JSONArray ja = new JSONArray(json);
+                for(int i = 0 ; i < ja.length() ; ++i) {
+                    String sData = ja.optString(i);
+                    a.add(sData);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return a;
+    }
+
+    public static ArrayList<Integer> getIntArrayPref(Context context, String key) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String json = prefs.getString(key, null);
+        ArrayList<Integer> a = new ArrayList<>();
+        if( json != null) {
+            try {
+                JSONArray ja = new JSONArray(json);
+                for(int i = 0 ; i < ja.length() ; ++i) {
+                    Integer sData = ja.optInt(i);
+                    a.add(sData);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return a;
+    }
+
+    public static void setFavorate(Context context, int hash) {
+
+        if(liFavorate.size() >= 200) {
+            liFavorate.remove(liFavorate.size()-1);
+        }
+        liFavorate.add(hash);
+        ArrayList li = new ArrayList(liFavorate);
+        setStringArrayPref(context, KEY_FAVORATE, li);
+    }
+
+    public static void loadFavorate(Context context) {
+        liFavorate = new HashSet<>(getIntArrayPref(context, KEY_FAVORATE));
+    }
+
+    public static void removeFavorate(Context context, int hash) {
+        if(liFavorate.contains(hash)) {
+            liFavorate.remove(hash);
+        }
+        ArrayList li = new ArrayList(liFavorate);
+        setStringArrayPref(context, KEY_FAVORATE, li);
+    }
+
+    public static boolean isFavorated(int hash) {
+        return liFavorate.contains(hash);
     }
 }
 
