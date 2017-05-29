@@ -2,6 +2,7 @@ package com.madfactory.madyoutubefilter;
 
 import android.app.ActionBar;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
 import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
@@ -81,6 +83,19 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
+
+            if(msg.what != 0) {
+                ResetLoadInfo();
+                srl_youtubeList.setRefreshing(false);
+                AlertManager.ShowOk(getContext(), getString(R.string.alert_title), getString(R.string.err_network), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                return;
+            }
+
             adapter.notifyDataSetChanged();
             bLoadingNext = false;
             srl_youtubeList.setRefreshing(false);
@@ -204,6 +219,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     private void ResetLoadInfo() {
         nextToken = "";
+        bLoadingNext = false;
         randomAdsIndex = (new Random()).nextInt(5) + 4;
     }
 
@@ -245,7 +261,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onRefresh() {
-        nextToken = "";
+        ResetLoadInfo();
         LoadList();
     }
 
@@ -259,6 +275,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     void procList(int nErrorCode, String sResponse) {
         if(nErrorCode != 0) {
             // Error
+            Message msg = descRetHandler.obtainMessage(nErrorCode);
+            msg.sendToTarget();
             return;
         }
         JSONObject jsonObj = null;
