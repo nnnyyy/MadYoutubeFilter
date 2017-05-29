@@ -10,7 +10,8 @@ const weatherFreeAPIKey = '42d9865a1ddccdaa8f5d2bd8494a3f6b'
 const youtubeBrowerKey = 'AIzaSyCKfmVmbkI1-bFKVanEOwFTBDQr6sKZOuw'
 
 app.get('/list' , function(req,res_parent) {
-    res_parent.send([
+
+    var list = [
         {name:"Hot", key:"mostPopular", type:"chart"},
         {name:"BJ", key:"BJ", type:"search"},
         {name:"Music", key:"", type:"", subCategory:[
@@ -19,15 +20,28 @@ app.get('/list' , function(req,res_parent) {
             {name:"POP", key:"PLDcnymzs18LWrKzHmzrGH1JzLBqrHi3xQ", type:"playlist"}
         ]},
         {name:"Live", key:"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", type:"playlist"}
-    ]);
+    ];
+
+    switch(req.query.regionCode) {
+        case "JP":
+            list = [
+                {name:"Hot", key:"mostPopular", type:"chart"},
+                {name:"BJ", key:"BJ", type:"search"},
+                {name:"Live", key:"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", type:"playlist"}
+            ]
+            break;
+    }
+
+    res_parent.send(list);
 })
 
 
-var YoutubeSearch = function(params, pageToken, handler) {
+var YoutubeSearch = function(query, params, pageToken, handler) {
     var url_final = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&type=video&q='+urlencode(params);
     if(pageToken != null) {
         url_final += '&pageToken=' + pageToken;
     }
+    url_final += '&regionCode=' + query.regionCode;
     var reqOptions = {
         url: url_final,
         method: 'GET',
@@ -143,18 +157,20 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
 // 최신 트렌드
 // https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&chart=mostPopular&regionCode=KR&maxResults=12&key=AIzaSyCKfmVmbkI1-bFKVanEOwFTBDQr6sKZOuw
 app.get('/v/:arg1' , function(req,res_parent) {
-    var url_final = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&regionCode=KR&maxResults=12&key='+youtubeBrowerKey;
+    var regionCode = req.query.regionCode;
+    var url_final = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&maxResults=20&key='+youtubeBrowerKey;
     switch(req.query.contentType) {
         case "chart":
             if(req.query.pageToken != null) {
                 url_final += '&pageToken=' + req.query.pageToken;
             }
+            url_final += '&regionCode=' + regionCode;
             url_final += "&chart="+urlencode(req.params.arg1);
             YoutubeGetVideos(url_final, "", "", res_parent);
             break;
 
         case "search":
-            YoutubeSearch(req.params.arg1, req.query.pageToken, function(ret) {
+            YoutubeSearch(req.query, req.params.arg1, req.query.pageToken, function(ret) {
                 url_final += ('&id=' + JSON.parse(ret.sRet));
                 YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
             });

@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +33,7 @@ import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements HttpHelperListener {
@@ -88,8 +90,11 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        String cCode = Locale.getDefault().getCountry();
+        GVal.regionCode = cCode;
+
         httpHelper.SetListener(this);
-        httpHelper.Request(0, "http://4seasonpension.com:4000/list");
+        httpHelper.Request(0, "http://4seasonpension.com:4000/list?regionCode=" + GVal.regionCode);
     }
 
     @Override

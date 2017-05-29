@@ -20,6 +20,7 @@ import com.madfactory.madyoutubefilter.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Created by nnnyy on 2017-05-21.
@@ -51,7 +52,7 @@ public class YoutubeListAdapter extends BaseAdapter {
         final Context context = parent.getContext();
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
-        YoutubeArticleItem listViewItem = alYoutubeList.get(position);
+        final YoutubeArticleItem listViewItem = alYoutubeList.get(position);
 
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
@@ -76,19 +77,19 @@ public class YoutubeListAdapter extends BaseAdapter {
             TextView durationTextView = (TextView) convertView.findViewById(R.id.tvDuration);
             final LinearLayout btnFavoriteArea = (LinearLayout)convertView.findViewById(R.id.btnFavoriteArea);
             final ImageView btnFavorite = (ImageView)convertView.findViewById(R.id.btnFavorite);
-            if(GVal.isFavorated(titleTextView.getText().hashCode())) {
+            if(GVal.isFavorated(listViewItem.getID().hashCode())) {
                 btnFavorite.setImageResource(R.drawable.star);
             }
             btnFavoriteArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(GVal.isFavorated(titleTextView.getText().hashCode())) {
+                    if(GVal.isFavorated(listViewItem.getID().hashCode())) {
                         btnFavorite.setImageResource(R.drawable.star_gray);
-                        GVal.removeFavorate(context, titleTextView.getText().hashCode());
+                        GVal.removeFavorate(context, listViewItem.getID().hashCode());
                     }
                     else {
                         btnFavorite.setImageResource(R.drawable.star);
-                        GVal.setFavorate(context, titleTextView.getText().hashCode());
+                        GVal.setFavorate(context, listViewItem.getID().hashCode());
                     }
                 }
             });

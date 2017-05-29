@@ -243,6 +243,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             else {
                 adapter.removeAll();
             }
+            urlRet += "&regionCode=" + GVal.regionCode;
             httpHelper.Request(0, urlRet);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
