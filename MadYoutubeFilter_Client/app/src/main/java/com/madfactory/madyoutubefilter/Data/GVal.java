@@ -35,7 +35,8 @@ public class GVal {
                         JSONObject subCategory = arrSub.getJSONObject(j);
                         String sSubName = subCategory.getString("name");
                         String sSubKey = subCategory.getString("key");
-                        newCategory.AddSub(sSubName, sSubKey);
+                        String sSubType = subCategory.getString("type");
+                        newCategory.AddSub(sSubName, sSubKey, sSubType);
                     }
                 }
                 liCategories.add(newCategory);
@@ -58,17 +59,27 @@ public class GVal {
         public String sType;
         public List<SubCategory> liSubCategories = new ArrayList<>();
 
-        public void AddSub(String _sName, String _sKey) {
+        public void AddSub(String _sName, String _sKey, String _sType) {
             SubCategory newSub = new SubCategory();
             newSub.sKey = _sKey;
             newSub.sName = _sName;
+            newSub.sType = _sType;
             liSubCategories.add(newSub);
+        }
+
+        public String getType(int subIdx) {
+            if(liSubCategories.size() != 0 ) {
+                return liSubCategories.get(subIdx).sType;
+            }
+
+            return sType;
         }
     }
 
     public static class SubCategory {
         public String sName;
         public String sKey;
+        public String sType;
     }
 }
 

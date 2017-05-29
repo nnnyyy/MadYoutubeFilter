@@ -41,6 +41,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import javax.xml.datatype.Duration;
+
 
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, HttpHelperListener{
 
@@ -218,7 +220,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             }
         }
         try {
-            String urlRet = GVal.URL_Search + URLEncoder.encode(searchKey, "utf-8") + "?contentType=" + category.sType;
+            String urlRet = GVal.URL_Search + URLEncoder.encode(searchKey, "utf-8") + "?contentType=" + category.getType(subCategoryIndex);
             if(!nextToken.isEmpty()) {
                 urlRet += "&pageToken=" + nextToken;
             }
@@ -271,7 +273,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             for(int i = 0 ; i < len ; ++i) {
                 VideoInfo vi = new VideoInfo();
                 JSONObject content = arrContents.getJSONObject(i);
-                Log.e("SSSS", content.toString());
                 vi.id = content.getString("id");
                 vi.title = content.getString("title");
                 vi.thumbnailUrl = content.getString("thumnails");
