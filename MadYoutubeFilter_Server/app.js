@@ -36,7 +36,7 @@ app.get('/list' , function(req,res_parent) {
 })
 
 
-var YoutubeSearch = function(query, params, pageToken, handler) {
+var     YoutubeSearch = function(query, params, pageToken, handler) {
     var url_final = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&type=video&q='+urlencode(params);
     if(pageToken != null) {
         url_final += '&pageToken=' + pageToken;
@@ -57,21 +57,27 @@ var YoutubeSearch = function(query, params, pageToken, handler) {
             var sRet = "";
             var nextToken = JSON.parse(body).nextPageToken;
             var prevToken = JSON.parse(body).prevPageToken;
-            for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
-                var id = JSON.parse(body).items[i].id.videoId;
-                sRet += (id + ",");
+            if(JSON.parse(body).items != null) {
+                for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
+                    var id = JSON.parse(body).items[i].id.videoId;
+                    sRet += (id + ",");
+                }
+                handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
             }
-            handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
+            else {
+                handler({sRet:""});
+            }
         });
     }
     catch(err) {
         console.log(err);
-        handler({});
+        handler({sRet:""});
     }
 }
 
 var YoutubePlaylist = function(params, pageToken, handler) {
     var url_final = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&playlistId='+params;
+    console.log(url_final);
     if(pageToken != null) {
         url_final += '&pageToken=' + pageToken;
     }
@@ -90,16 +96,22 @@ var YoutubePlaylist = function(params, pageToken, handler) {
             var sRet = "";
             var nextToken = JSON.parse(body).nextPageToken;
             var prevToken = JSON.parse(body).prevPageToken;
-            for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
-                var id = JSON.parse(body).items[i].snippet.resourceId.videoId;
-                sRet += (id + ",");
+            if(JSON.parse(body).items != null) {
+                for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
+                    var id = JSON.parse(body).items[i].snippet.resourceId.videoId;
+                    sRet += (id + ",");
+                }
+                console.log("Ret : " + sRet);
+                handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
             }
-            handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
+            else {
+                handler({sRet:""});
+            }
         });
     }
     catch(err) {
         console.log(err);
-        handler({});
+        handler({sRet:""});
     }
 }
 
@@ -133,20 +145,25 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
             if( JSON.parse(body).prevPageToken ) {
                 prevPageToken = JSON.parse(body).prevPageToken;
             }
-            for( var i = 0 ; i < jsonRoot.items.length ; ++i) {
-                var item = jsonRoot.items[i];
-                var title = item.snippet.title;
-                var thumnails = item.snippet.thumbnails.medium.url;
-                var chtitle = item.snippet.channelTitle;
-                var id = item.id;
-                var duration = item.contentDetails.duration;
-                var definition = item.contentDetails.definition;
-                var viewCnt = item.statistics.viewCount;
-                var commentCnt = item.statistics.commentCount;
-                list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
+            if(jsonRoot.items != null) {
+                for( var i = 0 ; i < jsonRoot.items.length ; ++i) {
+                    var item = jsonRoot.items[i];
+                    var title = item.snippet.title;
+                    var thumnails = item.snippet.thumbnails.medium.url;
+                    var chtitle = item.snippet.channelTitle;
+                    var id = item.id;
+                    var duration = item.contentDetails.duration;
+                    var definition = item.contentDetails.definition;
+                    var viewCnt = item.statistics.viewCount;
+                    var commentCnt = item.statistics.commentCount;
+                    list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
+                }
+                //console.log({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+                res_parent.send({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
             }
-            //console.log({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
-            res_parent.send({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+            else {
+                res_parent.end({prevToken:"", nextToken:"", contents:list});
+            }
         });
     }
     catch(err) {
@@ -179,6 +196,7 @@ app.get('/v/:arg1' , function(req,res_parent) {
         case "playlist":
             YoutubePlaylist(req.params.arg1, req.query.pageToken, function(ret){
                 url_final += ('&id=' + JSON.parse(ret.sRet));
+                console.log(url_final);
                 YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
             });
             break;

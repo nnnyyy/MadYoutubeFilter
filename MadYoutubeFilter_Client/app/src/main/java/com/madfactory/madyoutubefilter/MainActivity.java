@@ -148,10 +148,17 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         }
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        GVal.MCategory mcFavorate = new GVal.MCategory();
+        mcFavorate.sName = "Favorate";
+        mcFavorate.sType = "Favorate";
+        CategoryFragment cf = new CategoryFragment();
+        cf.Set(mcFavorate);
+        adapter.addItem(mcFavorate.sName , cf);
+
         ListIterator<GVal.MCategory> iter = GVal.GetCategories().listIterator();
         while(iter.hasNext()) {
             GVal.MCategory mc = iter.next();
-            CategoryFragment cf = new CategoryFragment();
+            cf = new CategoryFragment();
             cf.Set(mc);
             adapter.addItem(mc.sName , cf);
         }

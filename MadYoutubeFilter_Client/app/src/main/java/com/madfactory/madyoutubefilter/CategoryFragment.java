@@ -226,6 +226,11 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     private void LoadList() {
         if(bLoadingNext) return;
         bLoadingNext = true;
+        if(category.sType == "Favorate") {
+
+            bLoadingNext = false;
+            return;
+        }
         String searchKey = category.sKey;
         if(category.liSubCategories.size() != 0) {
             if(searchKey.isEmpty()) {
@@ -288,7 +293,11 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
             JSONArray arrContents = jsonObj.getJSONArray("contents");
             int len = arrContents.length();
-            String sIdList = "";
+            if(len <= 0) {
+                Message msg = descRetHandler.obtainMessage(-1);
+                msg.sendToTarget();
+                return;
+            }
             for(int i = 0 ; i < len ; ++i) {
                 VideoInfo vi = new VideoInfo();
                 JSONObject content = arrContents.getJSONObject(i);
@@ -307,7 +316,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                 adapter.addItem(vi);
             }
 
-            Message msg = descRetHandler.obtainMessage(0, sIdList);
+            Message msg = descRetHandler.obtainMessage(0);
             msg.sendToTarget();
         } catch (JSONException e) {
             e.printStackTrace();

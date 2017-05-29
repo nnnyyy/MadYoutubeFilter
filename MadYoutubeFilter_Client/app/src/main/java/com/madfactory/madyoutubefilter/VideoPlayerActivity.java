@@ -47,7 +47,7 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity {
         player.setFullscreenControlFlags(controlFlags);
 
         if (!wasRestored) {
-            youTubePlayer.cueVideo(videoID);
+            youTubePlayer.loadVideo(videoID);
             youTubePlayer.play();
         }
     }
