@@ -1,6 +1,8 @@
 package com.madfactory.madyoutubefilter;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -16,7 +18,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethod;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -42,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private AdView mAdView;
+    private EditText etSearchText;
 
     private Toolbar toolbar;
     private ViewPager viewPager;
@@ -110,13 +116,14 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         Toolbar parentBar = (Toolbar)actionbarView.getParent();
         parentBar.setContentInsetsAbsolute(0,0);
 
-        EditText etSearchText = (EditText)findViewById(R.id.etSearchText);
+        etSearchText = (EditText)findViewById(R.id.etSearchText);
         etSearchText.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
                 if(keyCode == event.KEYCODE_ENTER) {
-
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(etSearchText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 }
                 return false;
             }
