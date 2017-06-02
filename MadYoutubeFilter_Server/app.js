@@ -36,7 +36,7 @@ app.get('/list' , function(req,res_parent) {
 })
 
 
-var     YoutubeSearch = function(query, params, pageToken, handler) {
+var YoutubeSearch = function(query, params, pageToken, handler) {
     var url_final = 'https://www.googleapis.com/youtube/v3/search?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&type=video&q='+urlencode(params);
     if(pageToken != null) {
         url_final += '&pageToken=' + pageToken;
@@ -54,18 +54,24 @@ var     YoutubeSearch = function(query, params, pageToken, handler) {
 
     try {
         request( reqOptions, function(err, res, body) {
-            var sRet = "";
-            var nextToken = JSON.parse(body).nextPageToken;
-            var prevToken = JSON.parse(body).prevPageToken;
-            if(JSON.parse(body).items != null) {
-                for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
-                    var id = JSON.parse(body).items[i].id.videoId;
-                    sRet += (id + ",");
+            try {
+                var sRet = "";
+                var nextToken = JSON.parse(body).nextPageToken;
+                var prevToken = JSON.parse(body).prevPageToken;
+                if(JSON.parse(body).items != null) {
+                    for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
+                        var id = JSON.parse(body).items[i].id.videoId;
+                        sRet += (id + ",");
+                    }
+                    handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
                 }
-                handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
+                else {
+                    handler({sRet:""});
+                }
             }
-            else {
+            catch(e) {
                 handler({sRet:""});
+                console.log("YoutubeSearch: " + e + " , " + url_final);
             }
         });
     }
@@ -77,7 +83,6 @@ var     YoutubeSearch = function(query, params, pageToken, handler) {
 
 var YoutubePlaylist = function(params, pageToken, handler) {
     var url_final = 'https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key='+youtubeBrowerKey+'&maxResults=20&playlistId='+params;
-    console.log(url_final);
     if(pageToken != null) {
         url_final += '&pageToken=' + pageToken;
     }
@@ -93,19 +98,24 @@ var YoutubePlaylist = function(params, pageToken, handler) {
 
     try {
         request( reqOptions, function(err, res, body) {
-            var sRet = "";
-            var nextToken = JSON.parse(body).nextPageToken;
-            var prevToken = JSON.parse(body).prevPageToken;
-            if(JSON.parse(body).items != null) {
-                for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
-                    var id = JSON.parse(body).items[i].snippet.resourceId.videoId;
-                    sRet += (id + ",");
+            try {
+                var sRet = "";
+                var nextToken = JSON.parse(body).nextPageToken;
+                var prevToken = JSON.parse(body).prevPageToken;
+                if(JSON.parse(body).items != null) {
+                    for( var i = 0 ; i < JSON.parse(body).items.length ; ++i) {
+                        var id = JSON.parse(body).items[i].snippet.resourceId.videoId;
+                        sRet += (id + ",");
+                    }
+                    handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
                 }
-                console.log("Ret : " + sRet);
-                handler({sRet: JSON.stringify(sRet), nextToken:nextToken, prevToken:prevToken});
+                else {
+                    handler({sRet:""});
+                }
             }
-            else {
+            catch(e) {
                 handler({sRet:""});
+                console.log("YoutubePlaylist: " + e + " , " + url_final);
             }
         });
     }
@@ -130,39 +140,40 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
 
     try {
         request( reqOptions, function(err, res, body) {
-            var list = []
-            var jsonRoot = JSON.parse(body);
-            if(jsonRoot.error) {
-                console.log(jsonRoot.error.message);
-                res_parent.end("Error");
-                return;
-            }
-            var nextPageToken = nextToken;
-            if( JSON.parse(body).nextPageToken ) {
-                nextPageToken = JSON.parse(body).nextPageToken;
-            }
-            var prevPageToken = prevToken;
-            if( JSON.parse(body).prevPageToken ) {
-                prevPageToken = JSON.parse(body).prevPageToken;
-            }
-            if(jsonRoot.items != null) {
-                for( var i = 0 ; i < jsonRoot.items.length ; ++i) {
-                    var item = jsonRoot.items[i];
-                    var title = item.snippet.title;
-                    var thumnails = item.snippet.thumbnails.medium.url;
-                    var chtitle = item.snippet.channelTitle;
-                    var id = item.id;
-                    var duration = item.contentDetails.duration;
-                    var definition = item.contentDetails.definition;
-                    var viewCnt = item.statistics.viewCount;
-                    var commentCnt = item.statistics.commentCount;
-                    list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
+            try {
+                var list = []
+                var jsonRoot = JSON.parse(body);
+                var nextPageToken = nextToken;
+                if( JSON.parse(body).nextPageToken ) {
+                    nextPageToken = JSON.parse(body).nextPageToken;
                 }
-                //console.log({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
-                res_parent.send({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+                var prevPageToken = prevToken;
+                if( JSON.parse(body).prevPageToken ) {
+                    prevPageToken = JSON.parse(body).prevPageToken;
+                }
+                if(jsonRoot.items != null) {
+                    for( var i = 0 ; i < jsonRoot.items.length ; ++i) {
+                        var item = jsonRoot.items[i];
+                        var title = item.snippet.title;
+                        var thumnails = item.snippet.thumbnails.medium.url;
+                        var chtitle = item.snippet.channelTitle;
+                        var id = item.id;
+                        var duration = item.contentDetails.duration;
+                        var definition = item.contentDetails.definition;
+                        var viewCnt = item.statistics.viewCount;
+                        var commentCnt = item.statistics.commentCount;
+                        list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
+                    }
+                    //console.log({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+                    res_parent.send({ret:0,prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+                }
+                else {
+                    res_parent.end({ret:-1, prevToken:"", nextToken:"", contents:list});
+                }
             }
-            else {
-                res_parent.end({prevToken:"", nextToken:"", contents:list});
+            catch(e) {
+                res_parent.end({ret:-1, prevToken:"", nextToken:""});
+                console.log("YoutubeGetVideos: " + e + ", " + url);
             }
         });
     }
@@ -196,7 +207,6 @@ app.get('/v/:arg1' , function(req,res_parent) {
         case "playlist":
             YoutubePlaylist(req.params.arg1, req.query.pageToken, function(ret){
                 url_final += ('&id=' + JSON.parse(ret.sRet));
-                console.log(url_final);
                 YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
             });
             break;

@@ -24,6 +24,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
 import com.madfactory.madyoutubefilter.Data.GVal;
@@ -59,6 +60,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         public String commentCnt;
     }
     private boolean bLoadingNext = false;
+    private boolean bVisibleToUser = false;
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
@@ -87,12 +89,14 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             if(msg.what != 0) {
                 ResetLoadInfo();
                 srl_youtubeList.setRefreshing(false);
-                AlertManager.ShowOk(getContext(), getString(R.string.alert_title), getString(R.string.err_network), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                if(bVisibleToUser) {
+                    AlertManager.ShowOk(getContext(), getString(R.string.alert_title), getString(R.string.err_network), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                    }
-                });
+                        }
+                    });
+                }
                 return;
             }
 
@@ -288,6 +292,11 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         JSONObject jsonObj = null;
         try {
             jsonObj = new JSONObject(sResponse);
+            int nRet = jsonObj.getInt("ret");
+            if(nRet != 0) {
+                Toast.makeText(getContext(),"리스트 가져오기 실패", Toast.LENGTH_SHORT).show();
+                return;
+            }
             if(!jsonObj.isNull("nextToken"))
                 nextToken = jsonObj.getString("nextToken");
 
@@ -326,5 +335,17 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if(isVisibleToUser) {
+            Log.e("VisibleCategory",category.sName);
+        }
+        else {
+            Log.e("InvisibleCategory",category.sName);
+        }
+        bVisibleToUser = isVisibleToUser;
     }
 }

@@ -98,8 +98,12 @@ public class YoutubeListAdapter extends BaseAdapter {
             Picasso.with(context).load(listViewItem.getThumbnailURL()).into(iconImageView);
             titleTextView.setText(listViewItem.getTitle());
             NumberFormat nf = NumberFormat.getInstance();
-            nf.setMaximumIntegerDigits(10); //최대수 지정
-            viewCntTextView.setText("view: " + nf.format( Integer.parseInt(listViewItem.getViewCnt()) ));
+            try {
+                nf.setMaximumIntegerDigits(10); //최대수 지정
+                viewCntTextView.setText("view: " + nf.format( Integer.parseInt(listViewItem.getViewCnt()) ));
+            }catch(NumberFormatException e) {
+                viewCntTextView.setText("view: 0");
+            }
             durationTextView.setText(listViewItem.getDuration());
         }
         return convertView;
