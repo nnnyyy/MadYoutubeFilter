@@ -31,6 +31,8 @@ import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeArticleItem;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
+import com.madfactory.madyoutubefilter.common.LoadingDialog;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -59,6 +61,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         public String commentCnt;
     }
     private boolean bLoadingNext = false;
+    private boolean bVisible = false;
+    LoadingDialog loadingDlg;
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
@@ -87,6 +91,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             if(msg.what != 0) {
                 ResetLoadInfo();
                 srl_youtubeList.setRefreshing(false);
+                HideLoadingDialog();
                 AlertManager.ShowOk(getContext(), getString(R.string.alert_title), getString(R.string.err_network), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -99,6 +104,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             adapter.notifyDataSetChanged();
             bLoadingNext = false;
             srl_youtubeList.setRefreshing(false);
+            HideLoadingDialog();
         }
     }
 
@@ -250,8 +256,14 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             }
             urlRet += "&regionCode=" + GVal.regionCode;
             httpHelper.Request(0, urlRet);
+            if(bVisible){
+                loadingDlg = new LoadingDialog(getContext(), android.R.style.Theme_Translucent_NoTitleBar);
+                loadingDlg.show();
+            }
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            HideLoadingDialog();
         }
     }
 
@@ -320,11 +332,22 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             msg.sendToTarget();
         } catch (JSONException e) {
             e.printStackTrace();
+            HideLoadingDialog();
         }
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        bVisible = isVisibleToUser;
+    }
+
+    private void HideLoadingDialog() {
+        if(loadingDlg != null)
+            loadingDlg.hide();
     }
 }
