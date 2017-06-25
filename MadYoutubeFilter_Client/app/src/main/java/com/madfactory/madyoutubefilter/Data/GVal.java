@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -19,11 +20,12 @@ import java.util.List;
 public class GVal {
     public static final String URL_Search = "http://4seasonpension.com:4000/v/";
     public static final String URL_Description = "http://4seasonpension.com:4000/videosinfo/";
+    public static final String URL_FavorateListSearch = "http://4seasonpension.com:4000/fav/";
     public static final String ANDROID_KEY = "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk";
     public static final String KEY_FAVORATE = "ReadedArticles";
     public static String regionCode = "JP";
 
-    public static HashSet<Integer> liFavorate = new HashSet<>();
+    public static HashSet<String> liFavorate = new HashSet<>();
     static public List<MCategory> liCategories = new ArrayList<>();
     static public boolean LoadCategory(String sResponse){
         liCategories.clear();
@@ -145,7 +147,7 @@ public class GVal {
         return a;
     }
 
-    public static void setFavorate(Context context, int hash) {
+    public static void setFavorate(Context context, String hash) {
 
         if(liFavorate.size() >= 200) {
             liFavorate.remove(liFavorate.size()-1);
@@ -156,10 +158,10 @@ public class GVal {
     }
 
     public static void loadFavorate(Context context) {
-        liFavorate = new HashSet<>(getIntArrayPref(context, KEY_FAVORATE));
+        liFavorate = new HashSet<>(getStringArrayPref(context, KEY_FAVORATE));
     }
 
-    public static void removeFavorate(Context context, int hash) {
+    public static void removeFavorate(Context context, String hash) {
         if(liFavorate.contains(hash)) {
             liFavorate.remove(hash);
         }
@@ -167,7 +169,18 @@ public class GVal {
         setStringArrayPref(context, KEY_FAVORATE, li);
     }
 
-    public static boolean isFavorated(int hash) {
+    public static String getFavorates(int page) {
+        Iterator<String> iter = liFavorate.iterator();
+        String sTotal = "";
+        while(iter.hasNext()) {
+            String sID = iter.next();
+            sTotal += ( sID + "," );
+        }
+
+        return sTotal;
+    }
+
+    public static boolean isFavorated(String hash) {
         return liFavorate.contains(hash);
     }
 }

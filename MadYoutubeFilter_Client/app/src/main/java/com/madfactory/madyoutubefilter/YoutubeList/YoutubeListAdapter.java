@@ -29,7 +29,10 @@ import java.util.Locale;
 public class YoutubeListAdapter extends BaseAdapter {
     private ArrayList<YoutubeArticleItem> alYoutubeList = new ArrayList<>();
 
-    public YoutubeListAdapter() {}
+    private boolean bFavorate = false;
+    public YoutubeListAdapter(boolean _bFavorate) {
+        this.bFavorate = _bFavorate;
+    }
 
     @Override
     public int getCount() {
@@ -77,19 +80,20 @@ public class YoutubeListAdapter extends BaseAdapter {
             TextView durationTextView = (TextView) convertView.findViewById(R.id.tvDuration);
             final LinearLayout btnFavoriteArea = (LinearLayout)convertView.findViewById(R.id.btnFavoriteArea);
             final ImageView btnFavorite = (ImageView)convertView.findViewById(R.id.btnFavorite);
-            if(GVal.isFavorated(listViewItem.getID().hashCode())) {
+            if(GVal.isFavorated(listViewItem.getID())) {
                 btnFavorite.setImageResource(R.drawable.star);
             }
+
             btnFavoriteArea.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(GVal.isFavorated(listViewItem.getID().hashCode())) {
+                    if(GVal.isFavorated(listViewItem.getID())) {
                         btnFavorite.setImageResource(R.drawable.star_gray);
-                        GVal.removeFavorate(context, listViewItem.getID().hashCode());
+                        GVal.removeFavorate(context, listViewItem.getID());
                     }
                     else {
                         btnFavorite.setImageResource(R.drawable.star);
-                        GVal.setFavorate(context, listViewItem.getID().hashCode());
+                        GVal.setFavorate(context, listViewItem.getID());
                     }
                 }
             });

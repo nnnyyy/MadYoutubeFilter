@@ -204,7 +204,11 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         srl_youtubeList.setOnRefreshListener(this);
 
         ListView youtubeListView = (ListView)view.findViewById(R.id.lv_youtube_list);
-        this.adapter = new YoutubeListAdapter();
+        boolean bFavorate = false;
+        if(category.sType.equals("Favorate")) {
+            bFavorate = true;
+        }
+        this.adapter = new YoutubeListAdapter(bFavorate);
         youtubeListView.setAdapter(adapter);
 
         httpHelper.SetListener(this);
@@ -236,8 +240,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         if(bLoadingNext) return;
         bLoadingNext = true;
         if(category.sType == "Favorate") {
-
-            bLoadingNext = false;
+            // Load FavorateList
+            LoadFavorateList();
             return;
         }
         String searchKey = category.sKey;
@@ -268,6 +272,25 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             e.printStackTrace();
             HideLoadingDialog();
         }
+    }
+
+    private void LoadFavorateList() {
+        String sIDList = GVal.getFavorates(0);
+        if(sIDList.isEmpty()) {
+            bLoadingNext = false;
+            return;
+        }
+
+        String urlRet = GVal.URL_FavorateListSearch + sIDList;
+
+        if(!nextToken.isEmpty()) {
+            urlRet += "&pageToken=" + nextToken;
+        }
+        else {
+            adapter.removeAll();
+        }
+
+        httpHelper.Request(0, urlRet);
     }
 
     @Override

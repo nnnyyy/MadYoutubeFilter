@@ -182,6 +182,16 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
         res_parent.end(err);
     }
 }
+
+app.get('/fav/:arg1', function(req, res_parent) {
+    var url_final = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&maxResults=20&key='+youtubeBrowerKey;
+    url_final += ('&id=' + req.params.arg1);
+    if(req.query.pageToken != null) {
+        url_final += '&pageToken=' + req.query.pageToken;
+    }
+    YoutubeGetVideos(url_final, "", "", res_parent);
+})
+
 // 최신 트렌드
 // https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails&chart=mostPopular&regionCode=KR&maxResults=12&key=AIzaSyCKfmVmbkI1-bFKVanEOwFTBDQr6sKZOuw
 app.get('/v/:arg1' , function(req,res_parent) {
