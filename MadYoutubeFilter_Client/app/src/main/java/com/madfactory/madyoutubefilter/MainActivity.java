@@ -25,6 +25,7 @@ import android.view.inputmethod.InputMethod;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
@@ -36,6 +37,8 @@ import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -43,6 +46,8 @@ import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements HttpHelperListener {
+
+    RelativeLayout toplayout;
 
     // Firebase Analytics
     private FirebaseAnalytics mFirebaseAnalytics;
@@ -93,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        toplayout = (RelativeLayout)findViewById(R.id.toplayout);
+
         viewPager = (ViewPager)findViewById(R.id.viewpager);
         tabLayout = (TabLayout)findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -125,6 +132,9 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
                 if(keyCode == event.KEYCODE_ENTER) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(etSearchText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    toplayout.setFocusable(true);
+                    toplayout.setFocusableInTouchMode(true);
+                    Search(etSearchText.getText().toString());
                 }
                 return false;
             }
@@ -133,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(etSearchText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                toplayout.setFocusable(true);
+                toplayout.setFocusableInTouchMode(true);
                 Search(etSearchText.getText().toString());
             }
         });
@@ -141,12 +155,24 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
     }
 
     private void Search(String sSearchWord) {
-        Intent intent=new Intent(getApplicationContext(),SearchResultActivity.class);
+        if(sSearchWord.isEmpty()) {
+            // Error 처리
+            return;
+        }
+        Intent intent = new Intent(getApplicationContext(), SearchResultActivity.class);
+        intent.putExtra("SearchWord", etSearchText.getText().toString());
         startActivity(intent);
     }
 
     @Override
     public void onResponse(int nType, int nErrorCode, String sResponse) {
+        switch (nType) {
+            case 0: ListProc(nErrorCode, sResponse); break;
+            case 1: SearchProc(nErrorCode, sResponse); break;
+        }
+    }
+
+    private void ListProc(int nErrorCode, String sResponse) {
         if(nErrorCode != 0 ) {
             Message completeMsg = mHandler.obtainMessage(nErrorCode);
             completeMsg.sendToTarget();
@@ -161,12 +187,7 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         }
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        GVal.MCategory mcFavorate = new GVal.MCategory();
-        mcFavorate.sName = "Favorate";
-        mcFavorate.sType = "Favorate";
-        CategoryFragment cf = new CategoryFragment();
-        cf.Set(mcFavorate);
-        adapter.addItem(mcFavorate.sName , cf);
+        CategoryFragment cf = null;
 
         ListIterator<GVal.MCategory> iter = GVal.GetCategories().listIterator();
         while(iter.hasNext()) {
@@ -176,8 +197,26 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
             adapter.addItem(mc.sName , cf);
         }
 
+        //  즐겨찾기 추가
+        GVal.MCategory mcFavorate = new GVal.MCategory();
+        mcFavorate.sName = "Favorate";
+        mcFavorate.sType = "Favorate";
+        cf = new CategoryFragment();
+        cf.Set(mcFavorate);
+        adapter.addItem(mcFavorate.sName , cf);
+
         Message completeMsg = mHandler.obtainMessage(0, adapter);
         completeMsg.sendToTarget();
+    }
+    private void SearchProc(int nErrorCode, String sResponse) {
+        if(nErrorCode != 0) {
+            Intent intent = new Intent(getApplicationContext(), SearchResultActivity.class);
+            intent.putExtra("SearchRet", sResponse);
+            startActivity(intent);
+        }
+        else {
+            // Error 처리
+        }
     }
 
     private boolean exit = false;

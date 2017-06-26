@@ -47,7 +47,9 @@ var YoutubeSearch = function(query, params, pageToken, handler) {
     if(pageToken != null) {
         url_final += '&pageToken=' + pageToken;
     }
-    url_final += '&regionCode=' + query.regionCode;
+    if(query.regionCode != null) {
+        url_final += '&regionCode=' + query.regionCode;
+    }
     var reqOptions = {
         url: url_final,
         method: 'GET',
@@ -174,11 +176,11 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
                     res_parent.send({ret:0,prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
                 }
                 else {
-                    res_parent.end({ret:-1, prevToken:"", nextToken:"", contents:list});
+                    res_parent.send({ret:-1, prevToken:"", nextToken:"", contents:list});
                 }
             }
             catch(e) {
-                res_parent.end({ret:-1, prevToken:"", nextToken:""});
+                res_parent.send({ret:-1, prevToken:"", nextToken:""});
                 console.log("YoutubeGetVideos: " + e + ", " + url);
             }
         });
@@ -215,8 +217,12 @@ app.get('/v/:arg1' , function(req,res_parent) {
 
         case "search":
             YoutubeSearch(req.query, req.params.arg1, req.query.pageToken, function(ret) {
-                url_final += ('&id=' + JSON.parse(ret.sRet));
-                YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
+                try {
+                    url_final += ('&id=' + JSON.parse(ret.sRet));
+                    YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
+                }catch(err){
+                    res_parent.send({ret:-1, prevToken:"", nextToken:"", data: ret.sRet})
+                }
             });
             break;
 

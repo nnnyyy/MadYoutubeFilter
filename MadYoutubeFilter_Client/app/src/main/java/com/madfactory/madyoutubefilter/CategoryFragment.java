@@ -51,7 +51,7 @@ import javax.xml.datatype.Duration;
 
 public class CategoryFragment extends Fragment implements AdapterView.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener, HttpHelperListener{
 
-    public class VideoInfo {
+    public static class VideoInfo {
         public String id;
         public String title;
         public String thumbnailUrl;
@@ -67,22 +67,14 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
+    SwipeRefreshLayout srl_youtubeList;
     private String nextToken = "";
     private int randomAdsIndex = 5;
     YoutubeListAdapter adapter;
-    ListResultHandler listRetHandler;
     DescResultHandler descRetHandler;
     private GVal.MCategory category;
     public int subCategoryIndex = 0;
     private TextView selectedSubCategoryView = null;
-
-    class ListResultHandler extends Handler {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            httpHelper.Request(1, GVal.URL_Description + (String)msg.obj);
-        }
-    }
 
     class DescResultHandler extends Handler {
         @Override
@@ -160,8 +152,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         super.onViewCreated(view, savedInstanceState);
 
         ResetLoadInfo();
-
-        listRetHandler = new ListResultHandler();
         descRetHandler = new DescResultHandler();
 
         LinearLayout llTop = (LinearLayout)view.findViewById(R.id.ll_top);
@@ -300,8 +290,6 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         intent.putExtra("videoID", item.getID());
         startActivity(intent);
     }
-
-    SwipeRefreshLayout srl_youtubeList;
 
     @Override
     public void onRefresh() {
