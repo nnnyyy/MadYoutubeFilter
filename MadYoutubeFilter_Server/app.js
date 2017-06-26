@@ -3,24 +3,30 @@ var urlencode = require('urlencode');
 var request = require('request');
 var cheerio = require('cheerio')
 var xml2js = require('xml2js');
+var bodyParser = require('body-parser');
 var xmlParser = xml2js.Parser();
 var app = express();
 const dataAPIKey = '%2BldNua%2Fn0VEJt%2BtrwNRRz74Mvewgmu%2Fwz3P%2Fxtrc4GD%2BKO5Zx6oNgWYAaLpuTuBrWI6eCRMrgui%2BbdMVFvl4HQ%3D%3D';
 const weatherFreeAPIKey = '42d9865a1ddccdaa8f5d2bd8494a3f6b'
 const youtubeBrowerKey = 'AIzaSyCKfmVmbkI1-bFKVanEOwFTBDQr6sKZOuw'
+var list = []
+
+app.use(bodyParser.urlencoded({extended:true}))
+
+app.post('/list_update', function(req,res){
+    try {
+        var jsontext = req.param('listdata', null);
+        //var jsontext = '[{"name":"Hot", "key":"mostPopular", "type":"chart"}]';
+        var contact = JSON.parse(jsontext);
+        list = contact;
+        res.send(contact);
+    }
+    catch(err) {
+        res.end('wrong json format - update failed : ' + jsontext);
+    }
+})
 
 app.get('/list' , function(req,res_parent) {
-
-    var list = [
-        {name:"Hot", key:"mostPopular", type:"chart"},
-        {name:"BJ", key:"BJ", type:"search"},
-        {name:"Music", key:"", type:"", subCategory:[
-            {name:"Hot", key:"PLTDluH66q5mpm-Bsq3GlwjMOHITt2bwXE", type:"playlist"},
-            {name:"New", key:"PLTDluH66q5mq_h0fwkBFtMSRY7sPgcovp", type:"playlist"},
-            {name:"POP", key:"PLDcnymzs18LWrKzHmzrGH1JzLBqrHi3xQ", type:"playlist"}
-        ]},
-        {name:"Live", key:"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", type:"playlist"}
-    ];
 
     switch(req.query.regionCode) {
         case "JP":
@@ -227,7 +233,22 @@ app.get('/v/:arg1' , function(req,res_parent) {
 
 })
 
+app.get('/admin', function(req,res) {
+    res.render('admin', {});
+})
 
+app.set('view engine', 'ejs');
+
+list = [
+    {name:"Hot", key:"mostPopular", type:"chart"},
+    {name:"BJ", key:"BJ", type:"search"},
+    {name:"Music", key:"", type:"", subCategory:[
+        {name:"Hot", key:"PLTDluH66q5mpm-Bsq3GlwjMOHITt2bwXE", type:"playlist"},
+        {name:"New", key:"PLTDluH66q5mq_h0fwkBFtMSRY7sPgcovp", type:"playlist"},
+        {name:"POP", key:"PLDcnymzs18LWrKzHmzrGH1JzLBqrHi3xQ", type:"playlist"}
+    ]},
+    {name:"Live", key:"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", type:"playlist"}
+];
 
 app.listen(4000, function() {
     console.log('Today\'s Video listening on port 4000!');

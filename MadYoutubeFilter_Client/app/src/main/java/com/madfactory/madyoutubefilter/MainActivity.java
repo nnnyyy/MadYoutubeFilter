@@ -2,6 +2,7 @@ package com.madfactory.madyoutubefilter;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.inputmethodservice.InputMethodService;
 import android.os.Handler;
 import android.os.Looper;
@@ -132,11 +133,16 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Search(etSearchText.getText().toString());
             }
         });
 
         return true;
+    }
+
+    private void Search(String sSearchWord) {
+        Intent intent=new Intent(getApplicationContext(),SearchResultActivity.class);
+        startActivity(intent);
     }
 
     @Override

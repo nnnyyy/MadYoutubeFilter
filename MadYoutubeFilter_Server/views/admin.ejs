@@ -1,0 +1,44 @@
+<!-- views/home.ejs -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Node.js Blog</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">    
+</head>
+
+<body>
+    <div class="container">    
+	<h1>사용법</h1><br/>
+	[] - 배열 시작 및 끝<br/>
+	name - 탭에 나올 이름<br/>
+	type - chart, search, playlist 가 있음. <br/>
+	chart 는 key에 chart 명을 기입해야 함. chart명은 몇개 정해져 있음.<br/>
+	search는 key에 말그대로 검색어를 입력하면 됨.</br>
+	playlist는 key에 playlist 의 키 값을 넣어주면 됨.</br>
+	subCategory 가 있는 항목은 부모 타입에 아무것도 안넣으면 됨. </br>
+	아래는 예제임 </br>
+<pre>
+list = [<br/>
+    <pre>{"name":"Hot", "key":"mostPopular", "type":"chart"},</pre><br/>
+    <pre>{"name":"BJ", "key":"BJ", "type":"search"},</pre><br/>
+    <pre>{"name":"Music", "key":"", "type":"", "subCategory":[<br/>
+        {"name":"Hot", "key":"PLTDluH66q5mpm-Bsq3GlwjMOHITt2bwXE", "type":"playlist"},<br/>
+        {"name":"New", "key":"PLTDluH66q5mq_h0fwkBFtMSRY7sPgcovp", "type":"playlist"},<br/>
+        {"name":"POP", "key":"PLDcnymzs18LWrKzHmzrGH1JzLBqrHi3xQ", "type":"playlist"}<br/>
+    ]},</pre><br/>
+    <pre>{"name":"Live", "key":"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", "type":"playlist"}</pre><br/>
+];    <br/>
+</pre>
+		<form action= "./list_update" method= "post">
+			<textarea name = "listdata" cols = "50" rows = "5"  
+                              placeholder='ex > [{"name":"Live", "key":"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx", "type":"playlist"}]'></textarea>
+			<input type = "submit" value = "submit"/>
+			<input type = "reset" value = "reset"/>
+		</form>
+    </div>
+</body>
+
+</html>

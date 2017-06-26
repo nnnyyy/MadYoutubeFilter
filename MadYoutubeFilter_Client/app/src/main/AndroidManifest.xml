@@ -9,11 +9,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- 화면전환 시에도 데이터가 초기화 되지 않게 하는 옵션 orientation|screenSize -->
-        <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
+        <activity
+            android:name=".MainActivity"
             android:configChanges="orientation|screenSize"
-            >
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,9 +23,10 @@
         </activity>
         <activity
             android:name=".VideoPlayerActivity"
-            android:label="@string/title_activity_video_player"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme"></activity>
+            android:label="@string/title_activity_video_player"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".SearchResultActivity"></activity>
     </application>
 
 </manifest>
