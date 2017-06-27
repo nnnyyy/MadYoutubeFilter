@@ -122,6 +122,8 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
 
+        descRetHandler = new ResultHandler();
+
         videoID = getIntent().getStringExtra("videoID");
         playerView = (YouTubePlayerView) findViewById(R.id.youtube_view);
         playerView.initialize(GVal.ANDROID_KEY, this);
@@ -129,7 +131,7 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
         srl_youtubeList = (SwipeRefreshLayout)findViewById(R.id.srl_youtube_list);
         srl_youtubeList.setOnRefreshListener(this);
 
-        ListView youtubeListView = (ListView)findViewById(R.id.lv_youtube_list);
+        ListView youtubeListView = (ListView)findViewById(R.id.lv_youtube_comments);
         this.adapter = new YoutubeCommentsAdapter();
         youtubeListView.setAdapter(adapter);
 
