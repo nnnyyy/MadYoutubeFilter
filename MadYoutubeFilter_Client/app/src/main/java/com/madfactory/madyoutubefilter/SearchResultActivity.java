@@ -2,6 +2,7 @@ package com.madfactory.madyoutubefilter;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -17,6 +18,7 @@ import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
 import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
+import com.madfactory.madyoutubefilter.YoutubeList.YoutubeArticleItem;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
 import com.madfactory.madyoutubefilter.common.LoadingDialog;
 
@@ -55,6 +57,10 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         //  리스트 아이템 클릭 이벤트
+        YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
+        Intent intent=new Intent(getApplicationContext(),VideoPlayerActivity.class);
+        intent.putExtra("videoID", item.getID());
+        startActivity(intent);
     }
 
     class SearchDescResultHandler extends Handler {

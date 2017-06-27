@@ -104,9 +104,9 @@ public class YoutubeListAdapter extends BaseAdapter {
             NumberFormat nf = NumberFormat.getInstance();
             try {
                 nf.setMaximumIntegerDigits(10); //최대수 지정
-                viewCntTextView.setText("view: " + nf.format( Integer.parseInt(listViewItem.getViewCnt()) ));
+                viewCntTextView.setText(nf.format( Integer.parseInt(listViewItem.getViewCnt()) ));
             }catch(NumberFormatException e) {
-                viewCntTextView.setText("view: 0");
+                viewCntTextView.setText("0");
             }
             durationTextView.setText(listViewItem.getDuration());
         }

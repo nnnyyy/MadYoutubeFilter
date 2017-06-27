@@ -30,6 +30,7 @@ import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
 import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
+import com.madfactory.madyoutubefilter.YoutubeLib.ConvertYoutubeApiDate;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeArticleItem;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
 import com.madfactory.madyoutubefilter.common.LoadingDialog;
@@ -41,7 +42,11 @@ import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -75,6 +80,9 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     private GVal.MCategory category;
     public int subCategoryIndex = 0;
     private TextView selectedSubCategoryView = null;
+    private ArrayList<TextView> liSubCategories = new ArrayList<>();
+
+    ConvertYoutubeApiDate youtubeDateConverter = new ConvertYoutubeApiDate();
 
     class DescResultHandler extends Handler {
         @Override
@@ -155,6 +163,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         descRetHandler = new DescResultHandler();
 
         LinearLayout llTop = (LinearLayout)view.findViewById(R.id.ll_top);
+        liSubCategories.clear();
         if(category.liSubCategories.size() != 0) {
             Iterator<GVal.SubCategory> iter = category.liSubCategories.iterator();
             int subIdx = 0;
@@ -169,14 +178,12 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                     @Override
                     public void onClick(View v) {
                         if(bLoadingNext) return;
-                        selectedSubCategoryView.setBackgroundColor(Color.rgb(235,235,235));
                         subCategoryIndex = (int)v.getTag();
                         ResetLoadInfo();
                         LoadList();
-                        selectedSubCategoryView = (TextView)v;
-                        selectedSubCategoryView.setBackgroundColor(Color.rgb(255,255,255));
                     }
                 });
+                liSubCategories.add(tv);
                 llTop.addView(tv);
                 if(subIdx == 0) {
                     selectedSubCategoryView = tv;
@@ -236,6 +243,13 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         }
         String searchKey = category.sKey;
         if(category.liSubCategories.size() != 0) {
+            TextView curTV = liSubCategories.get(subCategoryIndex);
+            if(selectedSubCategoryView != null) {
+                selectedSubCategoryView.setBackgroundColor(Color.rgb(235,235,235));
+            }
+            selectedSubCategoryView = curTV;
+            selectedSubCategoryView.setBackgroundColor(Color.rgb(255,255,255));
+
             if(searchKey.isEmpty()) {
                 searchKey = category.liSubCategories.get(subCategoryIndex).sKey;
             }
@@ -337,7 +351,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                 vi.thumbnailUrl = content.getString("thumnails");
                 vi.channelTitle = content.getString("chtitle");
                 vi.definition = content.getString("definition");
-                vi.duration = content.getString("duration");
+                vi.duration = youtubeDateConverter.Convert(content.getString("duration"));
                 vi.viewCnt = content.getString("viewCnt");
                 if( randomAdsIndex == adapter.getCount() -1 ) {
                     VideoInfo vi_temp = new VideoInfo();

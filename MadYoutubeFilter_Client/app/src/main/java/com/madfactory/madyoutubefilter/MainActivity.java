@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                if(keyCode == event.KEYCODE_ENTER) {
+                if(keyCode == event.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_UP ) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(etSearchText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     toplayout.setFocusable(true);
