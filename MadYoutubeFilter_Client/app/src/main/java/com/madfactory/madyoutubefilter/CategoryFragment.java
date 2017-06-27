@@ -97,7 +97,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         }
     }
 
-    UIHandler uiHandler = new UIHandler();
+    UIHandler uiHandler;
 
     class DescResultHandler extends Handler {
         @Override
@@ -176,6 +176,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
         ResetLoadInfo();
         descRetHandler = new DescResultHandler();
+        uiHandler = new UIHandler();
 
         LinearLayout llTop = (LinearLayout)view.findViewById(R.id.ll_top);
         liSubCategories.clear();
