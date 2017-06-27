@@ -163,7 +163,10 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
                     for( var i = 0 ; i < jsonRoot.items.length ; ++i) {
                         var item = jsonRoot.items[i];
                         var title = item.snippet.title;
-                        var thumnails = item.snippet.thumbnails.medium.url;
+                        var thumnails = item.snippet.thumbnails.default.url;
+                        if( item.snippet.thumbnails.high != null ) {
+                            thumbnails = item.snippet.thumbnails.high.url;
+                        }
                         var chtitle = item.snippet.channelTitle;
                         var id = item.id;
                         var duration = item.contentDetails.duration;
@@ -230,16 +233,16 @@ app.get('/comments/:arg1', function(req, res_parent) {
                         var publish_date = item.snippet.topLevelComment.snippet.publishedAt;
                         var update_date = item.snippet.topLevelComment.snippet.updatedAt;
                         /*
-                        var title = item.snippet.title;
-                        var thumnails = item.snippet.thumbnails.medium.url;
-                        var chtitle = item.snippet.channelTitle;
-                        var id = item.id;
-                        var duration = item.contentDetails.duration;
-                        var definition = item.contentDetails.definition;
-                        var viewCnt = item.statistics.viewCount;
-                        var commentCnt = item.statistics.commentCount;
-                        list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
-                        */
+                         var title = item.snippet.title;
+                         var thumnails = item.snippet.thumbnails.medium.url;
+                         var chtitle = item.snippet.channelTitle;
+                         var id = item.id;
+                         var duration = item.contentDetails.duration;
+                         var definition = item.contentDetails.definition;
+                         var viewCnt = item.statistics.viewCount;
+                         var commentCnt = item.statistics.commentCount;
+                         list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
+                         */
                         list.push({comment:comment, authname:authorName, likecnt:likecnt, pdate:publish_date, udate:update_date});
                     }
                     //console.log({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
