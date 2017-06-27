@@ -19,8 +19,8 @@ import java.util.List;
 
 public class GVal {
     public static final String URL_Search = "http://4seasonpension.com:4000/v/";
-    public static final String URL_Description = "http://4seasonpension.com:4000/videosinfo/";
     public static final String URL_FavorateListSearch = "http://4seasonpension.com:4000/fav/";
+    public static final String URL_Comments = "http://4seasonpension.com:4000/comments/";
     public static final String ANDROID_KEY = "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk";
     public static final String KEY_FAVORATE = "ReadedArticles";
     public static String regionCode = "JP";

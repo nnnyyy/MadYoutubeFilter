@@ -191,6 +191,76 @@ var YoutubeGetVideos = function(url, nextToken, prevToken, res_parent) {
     }
 }
 
+app.get('/comments/:arg1', function(req, res_parent) {
+    var url_final = 'https://www.googleapis.com/youtube/v3/commentThreads?part=replies,snippet&key='+youtubeBrowerKey;
+    url_final += ('&videoId=' + req.params.arg1);
+    if(req.query.isRelevance != null) {
+        url_final += ('&order=relevance');
+    }
+
+    var reqOptions = {
+        url: url_final,
+        method: 'GET',
+        headers: {
+            'Accept' : 'application/xml',
+            'Accept-Charset' : 'utf-8',
+            'User-Agent' : 'my-reddit-client'
+        }
+    };
+
+    try {
+        request( reqOptions, function(err, res, body) {
+            try {
+                var list = []
+                var jsonRoot = JSON.parse(body);
+                var nextPageToken = "";
+                if( JSON.parse(body).nextPageToken ) {
+                    nextPageToken = JSON.parse(body).nextPageToken;
+                }
+                var prevPageToken = "";
+                if( JSON.parse(body).prevPageToken ) {
+                    prevPageToken = JSON.parse(body).prevPageToken;
+                }
+                if(jsonRoot.items != null) {
+                    for( var i = 0 ; i < jsonRoot.items.length ; ++i) {
+                        var item = jsonRoot.items[i];
+                        var comment = item.snippet.topLevelComment.snippet.textOriginal;
+                        var authorName = item.snippet.topLevelComment.snippet.authorDisplayName;
+                        var likecnt = item.snippet.topLevelComment.snippet.likeCount;
+                        var publish_date = item.snippet.topLevelComment.snippet.publishedAt;
+                        var update_date = item.snippet.topLevelComment.snippet.updatedAt;
+                        /*
+                        var title = item.snippet.title;
+                        var thumnails = item.snippet.thumbnails.medium.url;
+                        var chtitle = item.snippet.channelTitle;
+                        var id = item.id;
+                        var duration = item.contentDetails.duration;
+                        var definition = item.contentDetails.definition;
+                        var viewCnt = item.statistics.viewCount;
+                        var commentCnt = item.statistics.commentCount;
+                        list.push({id:id, title:title, thumnails:thumnails, chtitle:chtitle, duration: duration, definition:definition, viewCnt: viewCnt, commentCnt: commentCnt});
+                        */
+                        list.push({comment:comment, authname:authorName, likecnt:likecnt, pdate:publish_date, udate:update_date});
+                    }
+                    //console.log({prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+                    res_parent.send({ret:0,prevToken:prevPageToken, nextToken:nextPageToken, contents:list});
+                }
+                else {
+                    res_parent.send({ret:-1, prevToken:"", nextToken:"", contents:list});
+                }
+            }
+            catch(e) {
+                res_parent.send({ret:-1, prevToken:"", nextToken:""});
+                console.log("YoutubeGetVideos: " + e + ", " + url_final);
+            }
+        });
+    }
+    catch(err) {
+        console.log(err);
+        res_parent.end(err);
+    }
+})
+
 app.get('/fav/:arg1', function(req, res_parent) {
     var url_final = 'https://www.googleapis.com/youtube/v3/videos?part=snippet,contentDetails,statistics&maxResults=20&key='+youtubeBrowerKey;
     url_final += ('&id=' + req.params.arg1);

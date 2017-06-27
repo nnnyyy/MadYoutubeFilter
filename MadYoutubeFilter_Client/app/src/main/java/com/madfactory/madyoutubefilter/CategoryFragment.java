@@ -84,6 +84,21 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     ConvertYoutubeApiDate youtubeDateConverter = new ConvertYoutubeApiDate();
 
+    class UIHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+
+            if(bVisible){
+                loadingDlg = new LoadingDialog(getContext(), android.R.style.Theme_Translucent_NoTitleBar);
+                loadingDlg.show();
+            }
+
+        }
+    }
+
+    UIHandler uiHandler = new UIHandler();
+
     class DescResultHandler extends Handler {
         @Override
         public void handleMessage(Message msg) {
@@ -267,10 +282,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             }
             urlRet += "&regionCode=" + GVal.regionCode;
             httpHelper.Request(0, urlRet);
-            if(bVisible){
-                loadingDlg = new LoadingDialog(getContext(), android.R.style.Theme_Translucent_NoTitleBar);
-                loadingDlg.show();
-            }
+            Message msg = uiHandler.obtainMessage();
+            msg.sendToTarget();
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
