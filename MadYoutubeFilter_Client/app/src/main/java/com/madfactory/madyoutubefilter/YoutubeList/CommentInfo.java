@@ -5,4 +5,9 @@ package com.madfactory.madyoutubefilter.YoutubeList;
  */
 
 public class CommentInfo {
+    public String sComment;
+    public String sAuthName;
+    public String sLikeCnt;
+    public String sPDate;
+    public String sUDate;
 }

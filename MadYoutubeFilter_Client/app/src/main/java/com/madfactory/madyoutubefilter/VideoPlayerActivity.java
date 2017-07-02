@@ -1,43 +1,27 @@
 package com.madfactory.madyoutubefilter;
 
-import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
-import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
 import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelper;
 import com.madfactory.madyoutubefilter.HttpHelper.HttpHelperListener;
 import com.madfactory.madyoutubefilter.YoutubeLib.YouTubeFailureRecoveryActivity;
 import com.madfactory.madyoutubefilter.YoutubeList.CommentInfo;
 import com.madfactory.madyoutubefilter.YoutubeList.YoutubeCommentsAdapter;
-import com.madfactory.madyoutubefilter.YoutubeList.YoutubeListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
-import static android.R.attr.category;
 
 public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implements HttpHelperListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -85,6 +69,11 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
             for(int i = 0 ; i < len ; ++i) {
                 CommentInfo ci = new CommentInfo();
                 JSONObject content = arrContents.getJSONObject(i);
+                ci.sComment = content.getString("comment");
+                ci.sAuthName = content.getString("authname");
+                ci.sLikeCnt = content.getString("likecnt");
+                ci.sPDate = content.getString("pdate");
+                ci.sUDate = content.getString("udate");
                 adapter.addItem(ci);
             }
 
@@ -98,7 +87,8 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
 
     @Override
     public void onRefresh() {
-
+        nextToken = "";
+        LoadComments();
     }
 
     class ResultHandler extends Handler {
@@ -108,6 +98,7 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
 
             if(msg.what != 0) {
                 //Error 처리
+                srl_youtubeList.setRefreshing(false);
                 return;
             }
 
