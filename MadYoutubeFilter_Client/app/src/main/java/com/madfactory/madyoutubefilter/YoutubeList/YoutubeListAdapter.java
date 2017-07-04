@@ -1,8 +1,12 @@
 package com.madfactory.madyoutubefilter.YoutubeList;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import java.text.NumberFormat;
+
+import android.os.Build;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,8 +104,18 @@ public class YoutubeListAdapter extends BaseAdapter {
 
             // 아이템 내 각 위젯에 데이터 반영
             Picasso.with(context).load(listViewItem.getThumbnailURL()).into(iconImageView);
-            String sTitle = listViewItem.getTitle() + " [" + listViewItem.getCommentCnt() + "]";
-            titleTextView.setText(sTitle);
+            if(GVal.isReaded(listViewItem.getTitle().hashCode())){
+                titleTextView.setTextColor(Color.parseColor("#aaaaaa"));
+            }
+            String sComment = " <font color='#f95959'>[" + listViewItem.getCommentCnt() + "]</font>";
+            String sTitleRet = listViewItem.getTitle() + sComment;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+                titleTextView.setText(Html.fromHtml(sTitleRet, Html.FROM_HTML_MODE_LEGACY));
+            }
+            else{
+                titleTextView.setText(Html.fromHtml(sTitleRet));
+            }
+
             NumberFormat nf = NumberFormat.getInstance();
             try {
                 nf.setMaximumIntegerDigits(10); //최대수 지정

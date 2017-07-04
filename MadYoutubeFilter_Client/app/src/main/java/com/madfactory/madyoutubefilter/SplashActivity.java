@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.madfactory.madyoutubefilter.Data.GVal;
 import com.madfactory.madyoutubefilter.KBONetwork.KBONetworkInfo;
 
 public class SplashActivity extends AppCompatActivity {
@@ -108,6 +109,8 @@ public class SplashActivity extends AppCompatActivity {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        GVal.LoadReadedArticle(getApplicationContext());
 
         // 메인으로 이동
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);

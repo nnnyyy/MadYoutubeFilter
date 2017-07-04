@@ -68,7 +68,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     }
     private boolean bLoadingNext = false;
     private boolean bVisible = false;
-    LoadingDialog loadingDlg;
+    LoadingDialog loadingDlg = null;
 
     private OnFragmentInteractionListener mListener;
     private HttpHelper httpHelper = new HttpHelper();
@@ -313,7 +313,14 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
         YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
+
+        GVal.readArticle(getContext(), item.getTitle().hashCode());
+
+        TextView titleTextView = (TextView) view.findViewById(R.id.tvTitle) ;
+        //titleTextView.setTextColor(Color.parseColor(theme.SubFont));
+
         Intent intent=new Intent(getActivity(),VideoPlayerActivity.class);
         intent.putExtra("videoID", item.getID());
         intent.putExtra("titleString", item.getTitle());
@@ -368,7 +375,12 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                 vi.definition = content.getString("definition");
                 vi.duration = youtubeDateConverter.Convert(content.getString("duration"));
                 vi.viewCnt = content.getString("viewCnt");
-                vi.commentCnt = content.getString("commentCnt");
+                try {
+                    vi.commentCnt = content.getString("commentCnt");
+                }
+                catch(Exception e) {
+                    vi.commentCnt = "-";
+                }
                 if( randomAdsIndex == adapter.getCount() -1 ) {
                     VideoInfo vi_temp = new VideoInfo();
                     vi_temp.id = "admob_ads";
@@ -380,8 +392,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             Message msg = descRetHandler.obtainMessage(0);
             msg.sendToTarget();
         } catch (JSONException e) {
-            e.printStackTrace();
-            HideLoadingDialog();
+            Message msg = descRetHandler.obtainMessage(-1);
+            msg.sendToTarget();
         }
     }
 
@@ -397,7 +409,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void HideLoadingDialog() {
-        if(loadingDlg != null)
+        if(loadingDlg != null){
             loadingDlg.hide();
+        }
     }
 }

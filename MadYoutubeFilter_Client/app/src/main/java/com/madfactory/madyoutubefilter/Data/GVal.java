@@ -23,10 +23,12 @@ public class GVal {
     public static final String URL_Comments = "http://4seasonpension.com:4000/comments/";
     public static final String ANDROID_KEY = "AIzaSyAgOtMxWNk2NmaCsiBynf8O7kBty9SXPrk";
     public static final String KEY_FAVORATE = "ReadedArticles";
+    public static final String KEY_READED_ARTICLES = "ReadedArticles";
     public static String regionCode = "JP";
 
     public static HashSet<String> liFavorate = new HashSet<>();
     static public List<MCategory> liCategories = new ArrayList<>();
+    public static HashSet<Integer> liReadArticleCheck = new HashSet<>();
     static public boolean LoadCategory(String sResponse){
         liCategories.clear();
         try {
@@ -182,6 +184,24 @@ public class GVal {
 
     public static boolean isFavorated(String hash) {
         return liFavorate.contains(hash);
+    }
+
+    public static void readArticle(Context context, int hash) {
+
+        if(liReadArticleCheck.size() >= 200) {
+            liReadArticleCheck.remove(liReadArticleCheck.size()-1);
+        }
+        liReadArticleCheck.add(hash);
+        ArrayList li = new ArrayList(liReadArticleCheck);
+        setStringArrayPref(context, KEY_READED_ARTICLES, li);
+    }
+
+    public static void LoadReadedArticle(Context context) {
+        liReadArticleCheck = new HashSet<>(getIntArrayPref(context, KEY_READED_ARTICLES));
+    }
+
+    public static boolean isReaded(int hash) {
+        return liReadArticleCheck.contains(hash);
     }
 }
 
