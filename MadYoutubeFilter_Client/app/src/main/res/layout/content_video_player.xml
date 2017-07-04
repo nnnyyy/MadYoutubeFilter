@@ -4,6 +4,7 @@
     xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#ebebeb"
     android:orientation="vertical"
     >
 
@@ -31,6 +32,7 @@
     </LinearLayout>
 
     <com.google.android.youtube.player.YouTubePlayerView
+        android:background="#ebebeb"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

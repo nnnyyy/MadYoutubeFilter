@@ -7,4 +7,6 @@
     <string name="err_parcing">데이터 파싱에 실패했습니다.</string>
     <string name="alert_title">알림</string>
     <string name="title_activity_video_player">VideoPlayerActivity</string>
+    <string name="favorate">Favorate</string>
+    <string name="banner_ad_unit_id">ca-app-pub-8700965243978723/8608898097</string>
 </resources>

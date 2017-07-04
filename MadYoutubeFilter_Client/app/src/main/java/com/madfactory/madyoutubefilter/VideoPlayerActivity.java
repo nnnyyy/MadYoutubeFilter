@@ -62,7 +62,8 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
             jsonObj = new JSONObject(sResponse);
             int nRet = jsonObj.getInt("ret");
             if(nRet != 0) {
-                Toast.makeText(getApplicationContext(),"리스트 가져오기 실패", Toast.LENGTH_SHORT).show();
+                Message msg = descRetHandler.obtainMessage(-1);
+                msg.sendToTarget();
                 return;
             }
             if(!jsonObj.isNull("nextToken"))
@@ -90,13 +91,15 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
             msg.sendToTarget();
         } catch (JSONException e) {
             e.printStackTrace();
-            //HideLoadingDialog();
+            Message msg = descRetHandler.obtainMessage(-1);
+            msg.sendToTarget();
         }
     }
 
     @Override
     public void onRefresh() {
         nextToken = "";
+        bLoadingNext = false;
         LoadComments();
     }
 
@@ -207,5 +210,54 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
             youTubePlayer.loadVideo(videoID);
             youTubePlayer.play();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        if(mAdView != null) {
+            mAdView.resume();
+            mAdView.refreshDrawableState();
+        }
+
+        if(player != null) {
+            player.loadVideo(videoID);
+            player.play();
+        }
+
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if(mAdView != null) {
+            mAdView.pause();
+        }
+
+        if(player != null) {
+            player.release();
+        }
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if(mAdView != null) {
+            mAdView.destroy();
+        }
+
+        if( player != null ) {
+            player.release();
+        }
+
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onStop() {
+        if( player != null ) {
+            player.release();
+        }
+        player = null;
+        super.onStop();
     }
 }
