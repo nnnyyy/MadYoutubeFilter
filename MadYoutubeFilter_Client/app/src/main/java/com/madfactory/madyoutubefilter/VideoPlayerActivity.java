@@ -116,6 +116,7 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
         descRetHandler = new ResultHandler();
 
         videoID = getIntent().getStringExtra("videoID");
+        getIntent().getStringExtra("titleString");
         playerView = (YouTubePlayerView) findViewById(R.id.youtube_view);
         playerView.initialize(GVal.ANDROID_KEY, this);
 

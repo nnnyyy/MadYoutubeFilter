@@ -60,6 +60,7 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
         YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
         Intent intent=new Intent(getApplicationContext(),VideoPlayerActivity.class);
         intent.putExtra("videoID", item.getID());
+        intent.putExtra("titleString", item.getTitle());
         startActivity(intent);
     }
 
@@ -157,6 +158,7 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
                 vi.definition = content.getString("definition");
                 vi.duration = content.getString("duration");
                 vi.viewCnt = content.getString("viewCnt");
+                vi.commentCnt = content.getString("commentCnt");
                 adapter.addItem(vi);
             }
 

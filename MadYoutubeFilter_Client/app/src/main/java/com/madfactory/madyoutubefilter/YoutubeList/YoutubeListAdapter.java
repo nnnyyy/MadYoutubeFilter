@@ -100,7 +100,8 @@ public class YoutubeListAdapter extends BaseAdapter {
 
             // 아이템 내 각 위젯에 데이터 반영
             Picasso.with(context).load(listViewItem.getThumbnailURL()).into(iconImageView);
-            titleTextView.setText(listViewItem.getTitle());
+            String sTitle = listViewItem.getTitle() + " [" + listViewItem.getCommentCnt() + "]";
+            titleTextView.setText(sTitle);
             NumberFormat nf = NumberFormat.getInstance();
             try {
                 nf.setMaximumIntegerDigits(10); //최대수 지정

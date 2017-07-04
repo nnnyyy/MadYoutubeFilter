@@ -316,6 +316,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
         YoutubeArticleItem item = (YoutubeArticleItem) parent.getItemAtPosition(position);
         Intent intent=new Intent(getActivity(),VideoPlayerActivity.class);
         intent.putExtra("videoID", item.getID());
+        intent.putExtra("titleString", item.getTitle());
         startActivity(intent);
     }
 
@@ -367,6 +368,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                 vi.definition = content.getString("definition");
                 vi.duration = youtubeDateConverter.Convert(content.getString("duration"));
                 vi.viewCnt = content.getString("viewCnt");
+                vi.commentCnt = content.getString("commentCnt");
                 if( randomAdsIndex == adapter.getCount() -1 ) {
                     VideoInfo vi_temp = new VideoInfo();
                     vi_temp.id = "admob_ads";
