@@ -6,10 +6,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerView;
 import com.madfactory.madyoutubefilter.Data.GVal;
@@ -39,6 +45,9 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
     private String nextToken = "";
     YoutubeCommentsAdapter adapter;
     ResultHandler descRetHandler;
+
+    // Admob Ads
+    private AdView mAdView;
 
     @Override
     public void onResponse(int nType, int nErrorCode, String sResponse) {
@@ -113,10 +122,27 @@ public class VideoPlayerActivity extends YouTubeFailureRecoveryActivity implemen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
 
+        MobileAds.initialize(getApplicationContext(), "ca-app-pub-8700965243978723~7132164893");
+
+        mAdView = (AdView) findViewById(R.id.adViewMain);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice("AEA1198981C8725DFB7C153E9D1F2CFE")
+                .build();  // An example device ID
+        mAdView.loadAd(adRequest);
+
         descRetHandler = new ResultHandler();
 
         videoID = getIntent().getStringExtra("videoID");
-        getIntent().getStringExtra("titleString");
+        String sTitle = getIntent().getStringExtra("titleString");
+        TextView tvVTitle = (TextView)findViewById(R.id.tvVTitle);
+        tvVTitle.setText(sTitle);
+        ImageButton btnBack = (ImageButton)findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         playerView = (YouTubePlayerView) findViewById(R.id.youtube_view);
         playerView.initialize(GVal.ANDROID_KEY, this);
 

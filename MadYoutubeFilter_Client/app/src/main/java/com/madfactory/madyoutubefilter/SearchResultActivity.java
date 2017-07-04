@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.madfactory.madyoutubefilter.AlertManager.AlertManager;
@@ -94,6 +96,15 @@ public class SearchResultActivity extends AppCompatActivity implements AdapterVi
         setContentView(R.layout.activity_search_result);
 
         sKey = getIntent().getStringExtra("SearchWord");
+        TextView tvVTitle = (TextView)findViewById(R.id.tvVTitle);
+        tvVTitle.setText(sKey + " - 검색 결과");
+        ImageButton btnBack = (ImageButton)findViewById(R.id.btnBack);
+        btnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
         descRetHandler = new SearchDescResultHandler();
         srl_youtubeList = (SwipeRefreshLayout)findViewById(R.id.srl_youtube_list);

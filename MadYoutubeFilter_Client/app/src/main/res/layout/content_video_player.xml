@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -12,23 +13,54 @@
         android:background="#ebebeb"
         android:orientation="horizontal"
         >
+        <ImageButton
+            android:layout_margin="10dp"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/back_button"
+            android:id="@+id/btnBack"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:id="@+id/tvVTitle"
+            android:layout_marginRight="10dp"
+            android:text="Title"
+            />
     </LinearLayout>
 
     <com.google.android.youtube.player.YouTubePlayerView
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:id="@+id/youtube_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
-    <android.support.v4.widget.SwipeRefreshLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/srl_youtube_list"
-        >
-        <ListView
+        android:layout_height="match_parent">
+        <android.support.v4.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#ebebeb"
-            android:id="@+id/lv_youtube_comments">
-        </ListView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="wrap_content"
+            android:id="@+id/srl_youtube_list"
+            >
+            <ListView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ebebeb"
+                android:id="@+id/lv_youtube_comments">
+            </ListView>
+        </android.support.v4.widget.SwipeRefreshLayout>
+        <!-- view for AdMob Banner Ad -->
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adViewMain"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id" />
+    </RelativeLayout>
 
 </LinearLayout>

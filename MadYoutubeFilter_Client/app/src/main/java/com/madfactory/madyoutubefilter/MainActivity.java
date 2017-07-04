@@ -164,6 +164,7 @@ public class MainActivity extends AppCompatActivity implements HttpHelperListene
         }
         Intent intent = new Intent(getApplicationContext(), SearchResultActivity.class);
         intent.putExtra("SearchWord", etSearchText.getText().toString());
+        etSearchText.setText("");
         startActivity(intent);
     }
 

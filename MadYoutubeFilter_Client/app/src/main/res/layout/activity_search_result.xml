@@ -13,6 +13,21 @@
         android:background="#ebebeb"
         android:orientation="horizontal"
         >
+        <ImageButton
+            android:layout_margin="10dp"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:background="@drawable/back_button"
+            android:id="@+id/btnBack"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:id="@+id/tvVTitle"
+            android:text="Title"
+            android:layout_marginRight="10dp"
+            />
     </LinearLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
