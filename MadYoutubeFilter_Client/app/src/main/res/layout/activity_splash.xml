@@ -5,12 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:noHistory="true"
-    >
-
+    tools:context="com.madfactory.madyoutubefilter.SplashActivity">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="fitXY"
-        app:srcCompat="@drawable/splashback"/>
-
+        android:src="@drawable/splashback"/>
 </RelativeLayout>

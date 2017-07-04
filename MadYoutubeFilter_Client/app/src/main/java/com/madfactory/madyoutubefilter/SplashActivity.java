@@ -104,6 +104,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void LoadCommunityList() {
+
         try {
             Thread.sleep(750);
         } catch (InterruptedException e) {
