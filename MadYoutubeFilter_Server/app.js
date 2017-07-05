@@ -318,7 +318,7 @@ app.get('/admin', function(req,res) {
 
 app.set('view engine', 'ejs');
 
-list = [{"name":"  인기  ","key":"mostPopular","type":"chart"},{"name":"  BJ  ","key":"BJ","type":"search"},{"name":"  음악  ","key":"","type":"","subCategory":[{"name":"순위","key":"PLFgquLnL59alGJcdc0BEZJb2p7IgkL0Oe","type":"playlist"},{"name":"최신","key":"PLFgquLnL59anNXuf1M87FT1O169Qt6-Lp","type":"playlist"},{"name":"해외","key":"PLDcnymzs18LWrKzHmzrGH1JzLBqrHi3xQ","type":"playlist"}]},{"name":"  생방  ","key":"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx","type":"playlist"}];
+list = [{"name":"  인기  ","key":"mostPopular","type":"chart"},{"name":"  BJ  ","key":"BJ","type":"search"},{"name":"  음악  ","key":"","type":"","subCategory":[{"name":"순위","key":"PLUjVZgGkfjp8dFsyZkjWJtwzD6tlt2_pL","type":"playlist"},{"name":"최신","key":"PLID4CZACkMJTQGYm6R0Gc4yk_CKZIZKdv","type":"playlist"},{"name":"해외","key":"PLDcnymzs18LWrKzHmzrGH1JzLBqrHi3xQ","type":"playlist"}]},{"name":"  생방  ","key":"PLU12uITxBEPGpEPrYAxJvNDP6Ugx2jmUx","type":"playlist"}];
 
 app.listen(4000, function() {
     console.log('Today\'s Video listening on port 4000!');
