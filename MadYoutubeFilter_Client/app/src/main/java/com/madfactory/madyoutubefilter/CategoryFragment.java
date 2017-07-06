@@ -293,12 +293,14 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     }
 
     private void LoadFavorateList() {
-        String sIDList = GVal.getFavorates(0);
-        if(sIDList.isEmpty()) {
+        int cnt = GVal.getFavorateCnt();
+        if( cnt <= 0 ) {
             bLoadingNext = false;
+            srl_youtubeList.setRefreshing(false);
             return;
         }
 
+        String sIDList = GVal.getFavorates(0);
         String urlRet = GVal.URL_FavorateListSearch + sIDList;
 
         if(!nextToken.isEmpty()) {
@@ -330,6 +332,12 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onRefresh() {
         ResetLoadInfo();
+        if(category.sType == "Favorate") {
+            // Load FavorateList
+            LoadFavorateList();
+            return;
+        }
+        ResetLoadInfo();
         LoadList();
     }
 
@@ -352,7 +360,8 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
             jsonObj = new JSONObject(sResponse);
             int nRet = jsonObj.getInt("ret");
             if(nRet != 0) {
-                Toast.makeText(getContext(),"리스트 가져오기 실패", Toast.LENGTH_SHORT).show();
+                Message msg = descRetHandler.obtainMessage(-1);
+                msg.sendToTarget();
                 return;
             }
             if(!jsonObj.isNull("nextToken"))
@@ -385,6 +394,7 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
                     VideoInfo vi_temp = new VideoInfo();
                     vi_temp.id = "admob_ads";
                     adapter.addItem(vi_temp);
+                    randomAdsIndex += (new Random()).nextInt(5) + 7;
                 }
                 adapter.addItem(vi);
             }
@@ -410,7 +420,16 @@ public class CategoryFragment extends Fragment implements AdapterView.OnItemClic
 
     private void HideLoadingDialog() {
         if(loadingDlg != null){
-            loadingDlg.hide();
+            loadingDlg.dismiss();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        if(loadingDlg != null) {
+            loadingDlg.dismiss();
+            loadingDlg = null;
+        }
+        super.onDestroy();
     }
 }

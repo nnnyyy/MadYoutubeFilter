@@ -3,6 +3,7 @@ package com.madfactory.madyoutubefilter.Data;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -155,15 +156,22 @@ public class GVal {
             liFavorate.remove(liFavorate.size()-1);
         }
         liFavorate.add(hash);
+        Log.e("Favorate setFavorate", hash);
         ArrayList li = new ArrayList(liFavorate);
         setStringArrayPref(context, KEY_FAVORATE, li);
     }
 
     public static void loadFavorate(Context context) {
         liFavorate = new HashSet<>(getStringArrayPref(context, KEY_FAVORATE));
+        Iterator<String> iter = liFavorate.iterator();
+        while(iter.hasNext()) {
+            String sID = iter.next();
+            Log.e("Favorate loadFavorate", sID);
+        }
     }
 
     public static void removeFavorate(Context context, String hash) {
+        Log.e("Favorate Remove", hash);
         if(liFavorate.contains(hash)) {
             liFavorate.remove(hash);
         }
@@ -179,7 +187,13 @@ public class GVal {
             sTotal += ( sID + "," );
         }
 
+        Log.e("Favorate getFavorates", sTotal);
+
         return sTotal;
+    }
+
+    public static int getFavorateCnt() {
+        return liFavorate.size();
     }
 
     public static boolean isFavorated(String hash) {
