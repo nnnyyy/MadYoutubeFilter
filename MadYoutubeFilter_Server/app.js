@@ -301,8 +301,12 @@ app.get('/v/:arg1' , function(req,res_parent) {
 
         case "playlist":
             YoutubePlaylist(req.params.arg1, req.query.pageToken, function(ret){
-                url_final += ('&id=' + JSON.parse(ret.sRet));
-                YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
+                try {
+                    url_final += ('&id=' + JSON.parse(ret.sRet));
+                    YoutubeGetVideos(url_final, ret.nextToken, ret.prevToken, res_parent);
+                }catch(err){
+                    res_parent.send({ret:-1, prevToken:"", nextToken:"", data: ret.sRet})
+                }
             });
             break;
 
