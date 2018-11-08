@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="80dp">
-    <TextView
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.flipkart.youtubeview.YouTubePlayerView
+        android:id="@+id/yplayer"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:text="테스트 텍스트"/>
-</android.support.constraint.ConstraintLayout>
+        android:layout_margin="8dp"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>
